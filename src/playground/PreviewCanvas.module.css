@@ -1,0 +1,134 @@
+.canvas {
+  position: relative;
+  flex: 1;
+  min-height: 240px;
+  overflow: auto;
+  padding: 40px 32px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--ui-panel-sunken);
+  transition: background-color 200ms ease;
+}
+
+.canvas[data-bg='paper'] {
+  background-color: var(--ui-paper);
+}
+
+.canvas[data-bg='white'] {
+  background-color: #fdfdfc;
+}
+
+.canvas[data-bg='ink'] {
+  background-color: #14161a;
+}
+
+.canvas[data-bg='grid'] {
+  background-color: #eceeea;
+  background-image: linear-gradient(rgba(20, 22, 26, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20, 22, 26, 0.07) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+.canvas[data-bg='checker'] {
+  background-color: #f4f5f2;
+  background-image: linear-gradient(45deg, #e2e4e0 25%, transparent 25%),
+    linear-gradient(-45deg, #e2e4e0 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #e2e4e0 75%),
+    linear-gradient(-45deg, transparent 75%, #e2e4e0 75%);
+  background-size: 18px 18px;
+  background-position: 0 0, 0 9px, 9px -9px, -9px 0;
+}
+
+.stageWrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  padding: 36px 30px;
+  transition: max-width 220ms ease;
+}
+
+/* printer's crop marks around the proof */
+.crop {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-color: var(--mark);
+  border-style: solid;
+  border-width: 0;
+  pointer-events: none;
+}
+
+.canvas[data-bg='ink'] .crop {
+  --mark: rgba(255, 255, 255, 0.42);
+}
+
+.crop {
+  --mark: rgba(20, 22, 26, 0.34);
+}
+
+.cropTopLeft {
+  top: 18px;
+  left: 12px;
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+
+.cropTopRight {
+  top: 18px;
+  right: 12px;
+  border-top-width: 1px;
+  border-right-width: 1px;
+}
+
+.cropBottomLeft {
+  bottom: 18px;
+  left: 12px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+}
+
+.cropBottomRight {
+  bottom: 18px;
+  right: 12px;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+}
+
+.mount {
+  width: 100%;
+}
+
+.empty {
+  color: var(--ui-ink-3);
+  font-size: var(--text-13);
+  text-align: center;
+  padding: 40px 0;
+}
+
+/* ink strip — live theme swatches, a printer's colour bar */
+.inks {
+  margin-top: 22px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid rgba(20, 22, 26, 0.12);
+  border-radius: 2px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 520px;
+}
+
+.canvas[data-bg='ink'] .inks {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.ink {
+  flex: 1;
+  height: 14px;
+}

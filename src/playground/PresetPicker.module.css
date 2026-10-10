@@ -1,0 +1,111 @@
+.wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--ui-rule);
+  border-radius: var(--radius-md);
+  background: var(--ui-panel);
+  cursor: pointer;
+  font-size: var(--text-12);
+}
+
+.trigger:hover {
+  border-color: var(--ui-rule-strong);
+}
+
+.triggerText {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.triggerLabel {
+  font-weight: 500;
+}
+
+.modified {
+  font-size: 10px;
+  padding: 0 4px;
+  border-radius: 2px;
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.restore {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--ui-rule);
+  border-radius: var(--radius-md);
+  background: var(--ui-panel);
+  color: var(--ui-ink-2);
+  font-size: var(--text-11);
+  cursor: pointer;
+}
+
+.restore:hover {
+  color: var(--ui-ink);
+  border-color: var(--ui-rule-strong);
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 40;
+  width: 292px;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--ui-panel);
+  border: 1px solid var(--ui-rule-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-pop);
+}
+
+.option {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 7px 8px;
+  border: 0;
+  border-radius: 3px;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.option:hover {
+  background: var(--ui-hover);
+}
+
+.optionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.optionName {
+  font-size: var(--text-13);
+  font-weight: 500;
+  color: var(--ui-ink);
+}
+
+.optionDesc {
+  font-size: var(--text-11);
+  color: var(--ui-ink-2);
+  line-height: 1.4;
+}

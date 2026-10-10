@@ -1,0 +1,191 @@
+.panel {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  background: #14161a;
+  color: #e6e8e4;
+  border-top: 1px solid #23272c;
+  min-height: 0;
+}
+
+.resizer {
+  height: 6px;
+  cursor: ns-resize;
+  background: #14161a;
+  position: relative;
+  flex: none;
+}
+
+.resizer::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 2px;
+  transform: translateX(-50%);
+  width: 34px;
+  height: 2px;
+  border-radius: 2px;
+  background: #3a3f45;
+}
+
+.resizer:hover::after,
+.resizer:focus-visible::after {
+  background: var(--ui-accent);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-bottom: 1px solid #23272c;
+  flex: none;
+}
+
+.tabs {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 3px;
+  background: none;
+  color: #9aa19b;
+  font-size: var(--text-12);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: #e6e8e4;
+}
+
+.tab[aria-selected='true'] {
+  background: #23272c;
+  color: #e6e8e4;
+}
+
+.fileName {
+  font-family: var(--font-mono);
+  font-size: var(--text-11);
+  color: #6f7671;
+  border-left: 1px solid #2c3138;
+  padding-left: 10px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 9px;
+  border: 1px solid #2c3138;
+  border-radius: 3px;
+  background: #1b1e23;
+  color: #c8cdc9;
+  font-size: var(--text-11);
+  cursor: pointer;
+}
+
+.action:hover {
+  background: #23272c;
+  color: #fff;
+}
+
+.action[data-tone='accent'] {
+  border-color: transparent;
+  background: #e8461e;
+  color: #fff;
+}
+
+.action[data-tone='accent']:hover {
+  background: #d13d16;
+}
+
+.codeWrap {
+  overflow: auto;
+  min-height: 0;
+  transition: height 160ms ease;
+}
+
+.code {
+  margin: 0;
+  padding: 14px 16px 22px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.6;
+  tab-size: 2;
+  white-space: pre;
+  color: #d7dbd6;
+}
+
+.collapsedNote {
+  padding: 10px 14px;
+  font-size: var(--text-11);
+  color: #9aa19b;
+}
+
+/* token colours — an ink-block plate, not a stock editor theme */
+.code :global(.token.comment),
+.code :global(.token.prolog),
+.code :global(.token.doctype),
+.code :global(.token.cdata) {
+  color: #6b7280;
+  font-style: italic;
+}
+
+.code :global(.token.punctuation) {
+  color: #7f877f;
+}
+
+.code :global(.token.tag),
+.code :global(.token.selector),
+.code :global(.token.keyword) {
+  color: #ff8a5c;
+}
+
+.code :global(.token.attr-name),
+.code :global(.token.property),
+.code :global(.token.boolean),
+.code :global(.token.number),
+.code :global(.token.constant) {
+  color: #e2c07a;
+}
+
+.code :global(.token.attr-value),
+.code :global(.token.string),
+.code :global(.token.char) {
+  color: #9fd6a3;
+}
+
+.code :global(.token.function),
+.code :global(.token.class-name) {
+  color: #7d92ff;
+}
+
+.code :global(.token.operator),
+.code :global(.token.entity),
+.code :global(.token.url) {
+  color: #b9beba;
+}
+
+.code :global(.token.script),
+.code :global(.token.language-css) {
+  color: #e6e8e4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .codeWrap {
+    transition: none;
+  }
+}
