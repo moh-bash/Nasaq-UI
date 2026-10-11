@@ -1,0 +1,70 @@
+.block {
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--ui-rule);
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--ui-panel) 82%, transparent), var(--ui-panel) 100%);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 42px;
+  padding: 0 8px 0 16px;
+  border-bottom: 1px solid var(--ui-rule);
+}
+
+.filename {
+  font-family: var(--font-mono);
+  font-size: var(--text-12);
+  color: var(--ui-ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.copy,
+.copy[data-copied='true'] {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--ui-rule);
+  border-radius: 999px;
+  background: var(--ui-panel);
+  color: var(--ui-ink-2);
+  font-size: var(--text-12);
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 150ms ease, background-color 150ms ease, color 150ms ease;
+}
+
+.copy:hover {
+  border-color: var(--ui-rule-strong);
+  color: var(--ui-ink);
+}
+
+.copy:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.pre {
+  margin: 0;
+  padding: 16px 16px 20px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-13);
+  line-height: 1.7;
+  tab-size: 2;
+}
+
+.pre :global(code) {
+  font-family: inherit;
+  color: var(--ui-ink);
+  white-space: pre;
+}

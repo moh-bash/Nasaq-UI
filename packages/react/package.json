@@ -1,0 +1,62 @@
+{
+  "name": "nasaq",
+  "version": "0.1.0",
+  "description": "A tightened React component kit: accessible Accordion, Button and Tabs with a theme-first token system.",
+  "type": "module",
+  "main": "./dist/nasaq.cjs",
+  "module": "./dist/nasaq.js",
+  "types": "./types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "import": "./dist/nasaq.js",
+      "require": "./dist/nasaq.cjs"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "types"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "npm run build && npm run test && npm pack --dry-run"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "jsdom": "^30.1.2",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.3"
+  },
+  "keywords": [
+    "react",
+    "components",
+    "ui",
+    "design-system",
+    "accessible",
+    "accordion",
+    "tabs",
+    "button"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moh-bash/Nasaq-UI.git"
+  },
+  "homepage": "https://github.com/moh-bash/Nasaq-UI",
+  "bugs": {
+    "url": "https://github.com/moh-bash/Nasaq-UI/issues"
+  }
+}

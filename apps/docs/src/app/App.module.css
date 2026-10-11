@@ -1,0 +1,38 @@
+.root {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  color: var(--ui-ink);
+  background:
+    radial-gradient(circle at top left, rgba(29, 103, 255, 0.15), transparent 28%),
+    linear-gradient(180deg, var(--ui-paper) 0%, color-mix(in srgb, var(--ui-paper) 94%, #ffffff) 100%);
+  transition: background 200ms ease, color 200ms ease;
+}
+
+.content {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.studioFill {
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.studioBody {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
