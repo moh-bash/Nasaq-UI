@@ -14,7 +14,7 @@ Import the components you need and the stylesheet **once**:
 import { Button, Accordion, Tabs } from 'nasaq';
 import 'nasaq/styles.css';
 
-<Button variant="primary" size="lg" onSubmit={handleSubmit}>
+<Button variant="primary" size="lg" onClick={handleSubmit}>
   Create project
 </Button>
 

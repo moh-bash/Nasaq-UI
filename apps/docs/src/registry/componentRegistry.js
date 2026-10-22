@@ -114,6 +114,7 @@ const accordion = {
       { name: 'allowMultiple', type: 'boolean', default: 'false', description: 'Keep several answers open.' },
       { name: 'allowCollapse', type: 'boolean', default: 'true', description: 'Allow closing the last open answer.' },
       { name: 'defaultOpenId', type: 'string', default: "''", description: 'Item id to open on mount.' },
+      { name: 'emptyState', type: 'ReactNode', default: 'null', description: 'Optional content shown when items is empty.' },
     ],
   },
 };
@@ -226,6 +227,7 @@ const tabs = {
       { name: 'defaultActiveId', type: 'string', default: "'overview'", description: 'Tab selected on first render.' },
       { name: 'variant', type: "'underline' | 'pill' | 'boxed'", default: "'underline'", description: 'Visual treatment.' },
       { name: 'align', type: "'start' | 'center' | 'end' | 'stretch'", default: "'start'", description: 'Tab row alignment.' },
+      { name: 'emptyState', type: 'ReactNode', default: 'null', description: 'Optional content shown when items is empty.' },
     ],
   },
 };

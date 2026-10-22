@@ -15,6 +15,16 @@ describe('Tabs', () => {
     expect(screen.getByRole('tabpanel')).toHaveTextContent('Second panel');
   });
 
+  it('renders no empty state by default when there are no items', () => {
+    const { container } = render(<Tabs items={[]} />);
+    expect(container.querySelector('.tabs-empty')).toBeNull();
+  });
+
+  it('renders the optional empty state when there are no items', () => {
+    render(<Tabs items={[]} emptyState="Nothing here yet." />);
+    expect(screen.getByText('Nothing here yet.')).toBeInTheDocument();
+  });
+
   it('supports keyboard navigation', () => {
     render(<Tabs items={items} />);
     const first = screen.getByRole('tab', { name: 'One' });

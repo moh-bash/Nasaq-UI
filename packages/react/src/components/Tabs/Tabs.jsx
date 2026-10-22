@@ -5,6 +5,7 @@ export default function Tabs({
   defaultActiveId = '',
   variant = 'underline',
   align = 'start',
+  emptyState = null,
   className = '',
 }) {
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '');
@@ -16,7 +17,11 @@ export default function Tabs({
   const rootClass = ['tabs', `tabs--${variant}`, `tabs--align-${align}`, className].filter(Boolean).join(' ');
 
   if (!items.length) {
-    return <div className={rootClass}><p className="tabs-empty">Add tabs from the inspector.</p></div>;
+    return (
+      <div className={rootClass}>
+        {emptyState ? <div className="tabs-empty">{emptyState}</div> : null}
+      </div>
+    );
   }
 
   return (

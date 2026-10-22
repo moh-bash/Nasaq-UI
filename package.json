@@ -21,6 +21,6 @@
     "coverage": "npm run coverage -w @nasaq-ui/docs"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   }
 }

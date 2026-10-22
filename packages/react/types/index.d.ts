@@ -107,6 +107,8 @@ export interface AccordionProps {
   allowCollapse?: boolean;
   /** Item id to open on mount. */
   defaultOpenId?: string;
+  /** Optional content shown when `items` is empty. Renders nothing by default. */
+  emptyState?: ReactNode;
   className?: string;
 }
 
@@ -135,6 +137,8 @@ export interface TabsProps {
   variant?: TabsVariant;
   /** Tab row alignment. Default `start`. */
   align?: TabsAlign;
+  /** Optional content shown when `items` is empty. Renders nothing by default. */
+  emptyState?: ReactNode;
   className?: string;
 }
 
