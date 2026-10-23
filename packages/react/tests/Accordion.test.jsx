@@ -101,8 +101,13 @@ describe('Accordion', () => {
     expect(container.querySelector('.acc')).toHaveClass('acc--icon-start');
   });
 
-  it('shows an empty state when there are no items', () => {
-    setup({ items: [] });
-    expect(screen.getByText(/No questions yet/i)).toBeInTheDocument();
+  it('renders no empty state by default when there are no items', () => {
+    const { container } = setup({ items: [] });
+    expect(container.querySelector('.acc-empty')).toBeNull();
+  });
+
+  it('renders the optional empty state when there are no items', () => {
+    setup({ items: [], emptyState: 'Nothing here yet.' });
+    expect(screen.getByText('Nothing here yet.')).toBeInTheDocument();
   });
 });

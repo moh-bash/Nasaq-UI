@@ -76,6 +76,7 @@ export default function Accordion({
   allowMultiple = false,
   allowCollapse = true,
   defaultOpenId = '',
+  emptyState = null,
   className = '',
 }) {
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '');
@@ -111,7 +112,7 @@ export default function Accordion({
       )}
 
       {items.length === 0 ? (
-        <p className="acc-empty">No questions yet. Add one from the inspector.</p>
+        emptyState ? <div className="acc-empty">{emptyState}</div> : null
       ) : (
         <div className="acc-list">
           {items.map((item, index) => {
