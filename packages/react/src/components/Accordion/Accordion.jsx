@@ -1,23 +1,9 @@
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 
 /*
   Accordion — a dependency-free, accessible Q&A list.
-
-  Appearance is driven entirely by the matching Accordion.css file (generated
-  by the playground, or written by hand). Structure and behaviour are props.
-
-  <Accordion
-    items={[{ id, question, answer, disabled }]}
-    title="Before you send a job"
-    description="Lead times, artwork, stock, and proofs."
-    numbered={false}
-    icon="chevron"        // chevron | plus | arrow | number | none
-    iconPosition="end"    // start | end
-    allowMultiple={false} // one open at a time
-    allowCollapse={true}  // clicking the open row can close it
-    defaultOpenId=""
-  />
 */
+
 
 function Indicator({ icon, index }) {
   if (icon === 'chevron') {
@@ -76,16 +62,32 @@ export default function Accordion({
   allowMultiple = false,
   allowCollapse = true,
   defaultOpenId = '',
+  value,
+  onValueChange,
   emptyState = null,
   className = '',
 }) {
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '');
-  const [openIds, setOpenIds] = useState(() =>
+  const isControlled = Array.isArray(value);
+  const [uncontrolledOpenIds, setUncontrolledOpenIds] = useState(() =>
     defaultOpenId && items.some((item) => item.id === defaultOpenId) ? [defaultOpenId] : [],
   );
+  const openIds = isControlled ? value : uncontrolledOpenIds;
+  const triggerRefs = useRef({});
+
+  const setOpenIdsState = (updater) => {
+    if (isControlled) {
+      const next = typeof updater === 'function' ? updater(value) : updater;
+      if (typeof onValueChange === 'function') {
+        onValueChange(next);
+      }
+      return;
+    }
+    setUncontrolledOpenIds(updater);
+  };
 
   const toggle = (id) => {
-    setOpenIds((current) => {
+    setOpenIdsState((current) => {
       const isOpen = current.includes(id);
       if (isOpen) {
         if (!allowCollapse && current.length === 1) return current;
@@ -94,6 +96,8 @@ export default function Accordion({
       return allowMultiple ? [...current, id] : [id];
     });
   };
+
+  const enabledItems = items.filter((item) => !item.disabled);
 
   const showNumbering = numbered && icon !== 'number';
   const rootClass = ['nq-acc', `nq-acc--icon-${iconPosition}`, allowMultiple ? 'nq-acc--multi' : 'nq-acc--single', className]
@@ -119,6 +123,7 @@ export default function Accordion({
             const isOpen = openIds.includes(item.id);
             const triggerId = `${uid}-trigger-${item.id}`;
             const panelId = `${uid}-panel-${item.id}`;
+            const currentEnabledIndex = enabledItems.findIndex((entry) => entry.id === item.id);
             return (
               <div
                 key={item.id}
@@ -129,12 +134,27 @@ export default function Accordion({
                 <div className="nq-acc-item__header">
                   <button
                     type="button"
+                    ref={(el) => {
+                      triggerRefs.current[item.id] = el;
+                    }}
                     id={triggerId}
                     className="nq-acc-trigger"
                     aria-expanded={isOpen}
                     aria-controls={panelId}
                     disabled={item.disabled}
                     onClick={() => toggle(item.id)}
+                    onKeyDown={(event) => {
+                      if (item.disabled) return;
+                      if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+                      event.preventDefault();
+                      if (enabledItems.length === 0) return;
+                      let next;
+                      if (event.key === 'Home') next = enabledItems[0];
+                      else if (event.key === 'End') next = enabledItems.at(-1);
+                      else if (event.key === 'ArrowDown') next = enabledItems[(currentEnabledIndex + 1) % enabledItems.length];
+                      else next = enabledItems[(currentEnabledIndex - 1 + enabledItems.length) % enabledItems.length];
+                      triggerRefs.current[next.id]?.focus();
+                    }}
                   >
                     {showNumbering ? (
                       <span className="nq-acc-index" aria-hidden="true">
@@ -149,7 +169,12 @@ export default function Accordion({
                     ) : null}
                   </button>
                 </div>
-                <div className="nq-acc-panel" id={panelId} role="region" aria-labelledby={triggerId}>
+                <div
+                  className="nq-acc-panel"
+                  id={panelId}
+                  role={items.length <= 6 ? 'region' : undefined}
+                  aria-labelledby={triggerId}
+                >
                   <div className="nq-acc-panel__inner">
                     <div className="nq-acc-answer">{item.answer}</div>
                   </div>

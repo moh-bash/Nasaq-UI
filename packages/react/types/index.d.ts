@@ -1,7 +1,11 @@
 import type {
   ButtonHTMLAttributes,
+  AnchorHTMLAttributes,
+  ElementType,
+  ForwardRefExoticComponent,
   ReactElement,
   ReactNode,
+  RefAttributes,
 } from 'react';
 
 /**
@@ -50,7 +54,7 @@ export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'dan
 export type ButtonSize = 'sm' | 'md' | 'lg';
 export type ButtonAlign = 'start' | 'center' | 'end';
 
-export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className' | 'type' | 'disabled' | 'children'> {
+export interface ButtonBaseProps {
   /** Colour role. Default `primary`. */
   variant?: ButtonVariant;
   /** Padding, text and height bundle. Default `md`. */
@@ -67,12 +71,23 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
   leadingIcon?: ReactNode;
   /** Icon rendered after the label. */
   trailingIcon?: ReactNode;
-  type?: 'button' | 'submit' | 'reset';
   className?: string;
   children?: ReactNode;
+  as?: ElementType;
 }
 
-export declare function Button(props: ButtonProps): ReactElement;
+export type ButtonProps<T extends ElementType = 'button'> = ButtonBaseProps &
+  Omit<
+    T extends 'a'
+      ? AnchorHTMLAttributes<HTMLAnchorElement>
+      : ButtonHTMLAttributes<HTMLButtonElement>,
+    keyof ButtonBaseProps | 'disabled'
+  > &
+  (T extends 'a' ? { as?: 'a' } : { as?: 'button'; type?: 'button' | 'submit' | 'reset' });
+
+export declare const Button: ForwardRefExoticComponent<
+  ButtonProps<ElementType> & RefAttributes<HTMLElement>
+>;
 
 /* ------------------------------------------------------------------ */
 /* Accordion                                                          */
@@ -81,7 +96,7 @@ export declare function Button(props: ButtonProps): ReactElement;
 export interface AccordionItem {
   id: string;
   question: string;
-  answer: string;
+  answer: ReactNode;
   disabled?: boolean;
 }
 
@@ -105,8 +120,12 @@ export interface AccordionProps {
   allowMultiple?: boolean;
   /** Allow closing the last open answer. Default `true`. */
   allowCollapse?: boolean;
-  /** Item id to open on mount. */
+  /** Item id to open on mount (uncontrolled). */
   defaultOpenId?: string;
+  /** Controlled open item ids. */
+  value?: string[];
+  /** Called when open item ids change. */
+  onValueChange?: (value: string[]) => void;
   /** Optional content shown when `items` is empty. Renders nothing by default. */
   emptyState?: ReactNode;
   className?: string;
@@ -131,12 +150,20 @@ export type TabsAlign = 'start' | 'center' | 'end' | 'stretch';
 export interface TabsProps {
   /** Each tab is { id, label, content, disabled }. */
   items: TabsItem[];
-  /** Tab selected on first render. */
+  /** Tab selected on first render (uncontrolled). */
   defaultActiveId?: string;
+  /** Controlled active tab id. */
+  value?: string;
+  /** Called when the active tab changes. */
+  onValueChange?: (id: string) => void;
   /** Visual treatment. Default `underline`. */
   variant?: TabsVariant;
   /** Tab row alignment. Default `start`. */
   align?: TabsAlign;
+  /** Accessible label for the tablist. */
+  label?: string;
+  /** Orientation. Default `horizontal`. */
+  orientation?: 'horizontal' | 'vertical';
   /** Optional content shown when `items` is empty. Renders nothing by default. */
   emptyState?: ReactNode;
   className?: string;

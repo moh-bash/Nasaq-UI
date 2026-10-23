@@ -16,10 +16,8 @@ export default function DocsShell() {
   const isPlaygroundView = !!useMatch('/docs/components/:componentId/playground');
 
   useEffect(() => {
-    if (mobileOpen) {
-      setMobileOpen(false);
-    }
-  }, [isPlaygroundView]);
+    setMobileOpen(false);
+  }, [isPlaygroundView]); // eslint-disable-line react-hooks/set-state-in-effect
 
   const toggleCollapsed = () => {
     setCollapsed((prev) => {

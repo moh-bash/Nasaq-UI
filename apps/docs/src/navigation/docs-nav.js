@@ -1,4 +1,4 @@
-import { categories, readyComponents } from '../registry/componentRegistry.js';
+import { categories } from '../registry/componentRegistry.js';
 
 /* Sidebar navigation for the docs shell. */
 

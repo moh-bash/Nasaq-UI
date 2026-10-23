@@ -15,7 +15,6 @@ export default function Playground({ component }) {
   const { resolved } = useTheme();
   const { mode: stylingMode, setMode: setStylingMode } = useStylingMode();
   const shell = useShell();
-  const shellSidebarOpen = shell ? (!shell.collapsed && !shell.isNarrow ? true : shell.mobileOpen || !shell.collapsed) : true;
   const onToggleSidebar = shell
     ? () => {
         if (shell.isNarrow) {
