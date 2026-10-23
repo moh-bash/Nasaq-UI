@@ -115,6 +115,18 @@ export const useThemeStore = create(
             set({ overrides: {} }, false, 'theme/resetOverrides');
           },
 
+          replaceTheme(next) {
+            if (!next || typeof next !== 'object') return;
+            set(
+              {
+                mode: MODES.includes(next.mode) ? next.mode : 'system',
+                overrides: sanitizeOverrides(next.overrides),
+              },
+              false,
+              'theme/replaceTheme',
+            );
+          },
+
           resetTheme() {
             set({ ...initialThemeData }, false, 'theme/resetTheme');
           },

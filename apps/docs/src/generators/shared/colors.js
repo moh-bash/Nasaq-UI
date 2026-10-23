@@ -11,6 +11,7 @@ import { VARIANT_TOKENS } from '../../config/buttonDefaults.js';
 
 export const THEME_TOKEN_DEFAULTS = {
   primary: '#1e3ae0',
+  'on-solid': '#ffffff',
   secondary: '#0e4f45',
   accent: '#e8461e',
   background: '#edefec',

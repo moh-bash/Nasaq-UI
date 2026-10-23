@@ -16,6 +16,27 @@ if (!window.matchMedia) {
   });
 }
 
+/* jsdom has no layout engine. The resizable split and scroll spy only need
+   the observer contracts, not real measurements. */
+if (!globalThis.ResizeObserver) {
+  globalThis.ResizeObserver = class ResizeObserver {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
+}
+
+if (!globalThis.IntersectionObserver) {
+  globalThis.IntersectionObserver = class IntersectionObserver {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+    takeRecords() {
+      return [];
+    }
+  };
+}
+
 beforeEach(() => {
   resetStoresForTests();
 });

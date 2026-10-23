@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { Link2, Unlink } from 'lucide-react';
+import { contrastGrade, contrastRatio, readableOn } from '../utils/contrast.js';
 import styles from './controls.module.css';
 
 const HEX_RE = /^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
@@ -33,6 +34,11 @@ function ColorField({ field, value, onChange, resolvedTheme }) {
   const resolved = inherited ? resolvedTheme[field.token] || '#000000' : value;
   const [draft, setDraft] = useState(resolved);
   const focused = useRef(false);
+  const referenceToken =
+    field.contrastWith || (/surface|paper|background/.test(field.token) ? 'text' : 'surface');
+  const reference = resolvedTheme[referenceToken] || '#ffffff';
+  const ratio = contrastRatio(resolved, reference);
+  const grade = contrastGrade(ratio);
 
   useEffect(() => {
     if (!focused.current) setDraft(resolved);
@@ -74,6 +80,15 @@ function ColorField({ field, value, onChange, resolvedTheme }) {
           setDraft(resolved);
         }}
       />
+      <span
+        className={styles.contrastChip}
+        data-grade={grade === 'Fail' ? 'fail' : 'pass'}
+        style={{ backgroundColor: resolved, color: readableOn(resolved) }}
+        title={`Contrast against ${referenceToken}: ${ratio ? ratio.toFixed(1) : '—'}:1 (${grade || 'unknown'})`}
+      >
+        {ratio ? `${ratio.toFixed(1)}:1` : '—'}
+        {grade ? <span className={styles.contrastGrade}>{grade}</span> : null}
+      </span>
       <button
         type="button"
         className={styles.tokenBtn}

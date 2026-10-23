@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, MoonStar, Search, SunMedium } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme.js';
 import Logo from '../playground/Logo.jsx';
 import { useShell } from '../layouts/useShell.js';
+import { useShellStore } from '../stores/shellStore.js';
 import styles from './SiteHeader.module.css';
 
 const GITHUB_URL = 'https://github.com/moh-bash/Nasaq-UI';
@@ -22,20 +22,9 @@ function GitHubMark({ size = 16 }) {
 export default function SiteHeader() {
   const { resolvedMode, setMode } = useTheme();
   const shell = useShell();
-  const { inDocs, isNarrow, mobileOpen, focusSidebarSearch } = shell;
+  const { inDocs, isNarrow, mobileOpen } = shell;
+  const setCommandOpen = useShellStore((state) => state.setCommandOpen);
   const isDark = resolvedMode === 'dark';
-
-  useEffect(() => {
-    if (!inDocs) return undefined;
-    const onKeyDown = (event) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
-        event.preventDefault();
-        focusSidebarSearch();
-      }
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [focusSidebarSearch, inDocs]);
 
   return (
     <header className={styles.header}>
@@ -54,7 +43,7 @@ export default function SiteHeader() {
         </button>
       ) : null}
 
-      <Link to="/" className={styles.brand} aria-label="Nasaq UI home">
+      <Link to="/" className={styles.brand}>
         <Logo size={32} className={styles.brandMark} />
         <span className={styles.wordmark}>
           <span className={styles.name}>Nasaq UI</span>
@@ -67,10 +56,9 @@ export default function SiteHeader() {
           <button
             type="button"
             className={styles.searchTrigger}
-            onClick={focusSidebarSearch}
-            aria-label="Search documentation"
+            onClick={() => setCommandOpen(true)}
             aria-keyshortcuts="Control+K Meta+K"
-            title="Search components"
+            title="Search components and actions"
           >
             <Search size={14} aria-hidden="true" />
             <span className={styles.searchLabel}>Search…</span>

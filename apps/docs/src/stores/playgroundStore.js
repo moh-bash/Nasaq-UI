@@ -13,19 +13,25 @@ const KEY = 'nq.playground.v1';
 const LEGACY_KEY = 'cp.styling.v1';
 const VIEWPORTS = ['desktop', 'tablet', 'mobile'];
 const BACKGROUNDS = ['paper', 'white', 'ink', 'grid', 'checker'];
+const MOBILE_VIEWS = ['preview', 'code'];
+const PACKAGE_MANAGERS = ['npm', 'pnpm', 'yarn', 'bun'];
 
 export const initialPlaygroundData = {
   stylingMode: 'css',
   viewport: 'desktop',
   background: 'grid',
-  codePanelHeight: 268,
-  codePanelCollapsed: false,
+  mobileView: 'preview',
+  packageManager: 'npm',
+  splitLayout: { preview: 62, code: 38 },
 };
 
-function clampHeight(value) {
-  const parsed = Number(value);
-  if (!Number.isFinite(parsed)) return 268;
-  return Math.min(560, Math.max(120, parsed));
+function normaliseLayout(raw) {
+  if (!raw || typeof raw !== 'object') return { preview: 62, code: 38 };
+  const preview = Number(raw.preview);
+  const code = Number(raw.code);
+  if (!Number.isFinite(preview) || !Number.isFinite(code)) return { preview: 62, code: 38 };
+  const clampedPreview = Math.min(85, Math.max(20, preview));
+  return { preview: clampedPreview, code: 100 - clampedPreview };
 }
 
 function readLegacyStyling() {
@@ -55,16 +61,21 @@ export const usePlaygroundStore = create(
           set({ background }, false, 'playground/setBackground');
         },
 
-        setCodePanelHeight(height) {
-          const next = clampHeight(height);
-          if (get().codePanelHeight === next) return;
-          set({ codePanelHeight: next }, false, 'playground/setCodePanelHeight');
+        setMobileView(view) {
+          if (!MOBILE_VIEWS.includes(view) || get().mobileView === view) return;
+          set({ mobileView: view }, false, 'playground/setMobileView');
         },
 
-        setCodePanelCollapsed(collapsed) {
-          const next = Boolean(collapsed);
-          if (get().codePanelCollapsed === next) return;
-          set({ codePanelCollapsed: next }, false, 'playground/setCodePanelCollapsed');
+        setPackageManager(manager) {
+          if (!PACKAGE_MANAGERS.includes(manager) || get().packageManager === manager) return;
+          set({ packageManager: manager }, false, 'playground/setPackageManager');
+        },
+
+        setSplitLayout(layout) {
+          const next = normaliseLayout(layout);
+          const current = get().splitLayout;
+          if (current.preview === next.preview && current.code === next.code) return;
+          set({ splitLayout: next }, false, 'playground/setSplitLayout');
         },
       }),
       {
@@ -75,8 +86,9 @@ export const usePlaygroundStore = create(
           stylingMode: state.stylingMode,
           viewport: state.viewport,
           background: state.background,
-          codePanelHeight: state.codePanelHeight,
-          codePanelCollapsed: state.codePanelCollapsed,
+          mobileView: state.mobileView,
+          packageManager: state.packageManager,
+          splitLayout: state.splitLayout,
         }),
         migrate: (persisted) => {
           if (!persisted || typeof persisted !== 'object') return readLegacyStyling();
@@ -86,8 +98,13 @@ export const usePlaygroundStore = create(
               : 'css',
             viewport: VIEWPORTS.includes(persisted.viewport) ? persisted.viewport : 'desktop',
             background: BACKGROUNDS.includes(persisted.background) ? persisted.background : 'grid',
-            codePanelHeight: clampHeight(persisted.codePanelHeight),
-            codePanelCollapsed: Boolean(persisted.codePanelCollapsed),
+            mobileView: MOBILE_VIEWS.includes(persisted.mobileView)
+              ? persisted.mobileView
+              : 'preview',
+            packageManager: PACKAGE_MANAGERS.includes(persisted.packageManager)
+              ? persisted.packageManager
+              : 'npm',
+            splitLayout: normaliseLayout(persisted.splitLayout),
           };
         },
         onRehydrateStorage: () => (_state, error) => {

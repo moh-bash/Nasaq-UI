@@ -39,8 +39,8 @@ describe('App shell', () => {
     window.history.pushState({}, '', '/components/accordion');
     render(<App />);
     expect(await screen.findByRole('heading', { level: 1, name: 'Accordion' })).toBeInTheDocument();
-    expect(screen.getByText('Props')).toBeInTheDocument();
-    expect(screen.getByText('Usage')).toBeInTheDocument();
+    expect(screen.getAllByText('Props').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Usage').length).toBeGreaterThan(0);
   });
 
   it('redirects legacy /theme to the theming docs', async () => {

@@ -12,6 +12,7 @@ export const THEME_VERSION = 2;
 export const themeDefaults = {
   light: {
     primary: '#1e3ae0',
+    'on-solid': '#ffffff',
     secondary: '#0e4f45',
     accent: '#e8461e',
     background: '#edefec',
@@ -28,6 +29,7 @@ export const themeDefaults = {
   },
   dark: {
     primary: '#7d92ff',
+    'on-solid': '#101211',
     secondary: '#7fc9b4',
     accent: '#ff7a4d',
     background: '#101211',

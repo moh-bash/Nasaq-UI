@@ -17,6 +17,7 @@ export function useTheme() {
     setToken,
     resetToken,
     resetOverrides,
+    replaceTheme,
     resetTheme,
   } = useThemeStore(
     useShallow((state) => ({
@@ -26,6 +27,7 @@ export function useTheme() {
       setToken: state.setToken,
       resetToken: state.resetToken,
       resetOverrides: state.resetOverrides,
+      replaceTheme: state.replaceTheme,
       resetTheme: state.resetTheme,
     })),
   );
@@ -65,6 +67,7 @@ export function useTheme() {
     resetToken,
     resetOverride: resetToken,
     resetOverrides,
+    replaceTheme,
     resetTheme,
   };
 }

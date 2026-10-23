@@ -4,6 +4,7 @@
 
 export const THEME_TOKENS = [
   { key: 'primary', label: 'Primary', role: 'Brand actions, links, focus', cssVar: '--color-primary' },
+  { key: 'on-solid', label: 'On solid', role: 'Text and icons on primary/secondary/danger fills', cssVar: '--color-on-solid' },
   { key: 'secondary', label: 'Secondary', role: 'Alternate brand surface', cssVar: '--color-secondary' },
   { key: 'accent', label: 'Accent', role: 'Highlights and markers', cssVar: '--color-accent' },
   { key: 'background', label: 'Background', role: 'Page canvas', cssVar: '--color-background' },

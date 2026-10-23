@@ -54,10 +54,13 @@ export const initialShellData = {
   lastComponentId: null,
   lastViewByComponent: {},
   expandedComponentIds: [],
+  recentCommandIds: [],
   mobileDrawerOpen: false,
   mobileDrawerPath: null,
   /* null = follow the breakpoint (closed on narrow, open on desktop) */
   inspectorOpen: null,
+  commandOpen: false,
+  helpOpen: false,
 };
 
 function normalizeView(view) {
@@ -152,6 +155,23 @@ export const useShellStore = create(
             set({ inspectorOpen: next }, false, 'shell/setInspectorOpen');
           },
 
+          setCommandOpen(open) {
+            set({ commandOpen: Boolean(open) }, false, 'shell/setCommandOpen');
+          },
+
+          setHelpOpen(open) {
+            set({ helpOpen: Boolean(open) }, false, 'shell/setHelpOpen');
+          },
+
+          pushRecentCommand(commandId) {
+            if (!commandId) return;
+            const next = [
+              commandId,
+              ...get().recentCommandIds.filter((id) => id !== commandId),
+            ].slice(0, 6);
+            set({ recentCommandIds: next }, false, 'shell/pushRecentCommand');
+          },
+
 
 
           resetShell() {
@@ -169,6 +189,7 @@ export const useShellStore = create(
           lastComponentId: state.lastComponentId,
           lastViewByComponent: state.lastViewByComponent,
           expandedComponentIds: state.expandedComponentIds,
+          recentCommandIds: state.recentCommandIds,
         }),
         migrate: (persisted) => {
           /* v0 state lived in separate keys; the seed above already covers the

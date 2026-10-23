@@ -72,6 +72,18 @@ export const useComponentConfigStore = create(
           return configFor(get(), component);
         },
 
+        setConfig(component, config, label = 'Configuration') {
+          const next = component.validate(config);
+          set(
+            (state) => ({
+              configs: { ...state.configs, [component.id]: next },
+              lastChange: announce(label, 'loaded'),
+            }),
+            false,
+            'config/setConfig',
+          );
+        },
+
         updateConfig(component, path, value, label) {
           const next = component.validate(setPath(configFor(get(), component), path, value));
           set(

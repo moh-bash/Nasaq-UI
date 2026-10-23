@@ -298,14 +298,14 @@ exports[`defaultConfig generated CSS snapshots > Button.css 1`] = `
 
 .nq-btn--primary {
   --btn-bg: var(--color-primary, #1e3ae0);
-  --btn-fg: #ffffff;
+  --btn-fg: var(--color-on-solid, #ffffff);
   --btn-border: var(--color-primary, #1e3ae0);
   --btn-bg-hover: color-mix(in srgb, var(--color-primary, #1e3ae0) 88%, #000);
 }
 
 .nq-btn--secondary {
   --btn-bg: var(--color-secondary, #0e4f45);
-  --btn-fg: #ffffff;
+  --btn-fg: var(--color-on-solid, #ffffff);
   --btn-border: var(--color-secondary, #0e4f45);
   --btn-bg-hover: color-mix(in srgb, var(--color-secondary, #0e4f45) 88%, #000);
 }
@@ -326,7 +326,7 @@ exports[`defaultConfig generated CSS snapshots > Button.css 1`] = `
 
 .nq-btn--danger {
   --btn-bg: var(--color-danger, #c42b1c);
-  --btn-fg: #ffffff;
+  --btn-fg: var(--color-on-solid, #ffffff);
   --btn-border: var(--color-danger, #c42b1c);
   --btn-bg-hover: color-mix(in srgb, var(--color-danger, #c42b1c) 88%, #000);
 }
@@ -458,7 +458,7 @@ exports[`defaultConfig generated CSS snapshots > Tabs.css 1`] = `
 
 .nq-tabs--pill .nq-tabs-list button[aria-selected='true'] {
   background: var(--tabs-active);
-  color: var(--color-on-primary, #ffffff);
+  color: var(--color-on-solid, #ffffff);
 }
 
 .nq-tabs--boxed .nq-tabs-list {

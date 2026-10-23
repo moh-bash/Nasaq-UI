@@ -100,7 +100,7 @@ export function generateTabsCSS(config, theme = {}) {
   push();
   push(`${pill} ${selected} {`);
   push('  background: var(--tabs-active);');
-  push('  color: var(--color-on-primary, #ffffff);');
+  push('  color: var(--color-on-solid, #ffffff);');
   push('}');
   push();
 

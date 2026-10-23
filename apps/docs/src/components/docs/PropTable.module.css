@@ -44,6 +44,23 @@
   background: color-mix(in srgb, var(--ui-hover) 55%, transparent);
 }
 
+.table tr {
+  scroll-margin-top: 28px;
+}
+
+.table tr:target td {
+  background: var(--color-active);
+}
+
+.anchor {
+  text-decoration: none;
+  border-bottom: 1px dashed transparent;
+}
+
+.anchor:hover {
+  border-bottom-color: currentColor;
+}
+
 .empty {
   margin: 0;
   font-size: var(--text-13);

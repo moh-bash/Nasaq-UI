@@ -54,6 +54,8 @@
 }
 
 .pre {
+  display: flex;
+  gap: 14px;
   margin: 0;
   padding: 16px 16px 20px;
   overflow-x: auto;
@@ -63,8 +65,21 @@
   tab-size: 2;
 }
 
+.pre:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+
 .pre :global(code) {
   font-family: inherit;
   color: var(--ui-ink);
   white-space: pre;
+}
+
+.gutter {
+  flex: none;
+  color: var(--ui-ink-3);
+  white-space: pre;
+  text-align: right;
+  user-select: none;
 }

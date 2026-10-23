@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Outlet } from 'react-router-dom';
 import SiteHeader from '../app/SiteHeader.jsx';
+import SkipLink from '../components/SkipLink.jsx';
 import AppSidebar from './AppSidebar.jsx';
 import { useShell } from './useShell.js';
 import styles from './DocsShell.module.css';
@@ -51,6 +52,7 @@ export default function DocsShell() {
 
   return (
     <div className={styles.shell} data-view={view}>
+      <SkipLink />
       <SiteHeader />
       <div className={styles.body}>
         <aside
