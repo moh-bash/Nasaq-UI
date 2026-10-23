@@ -32,7 +32,7 @@ Components render unstyled until `nasaq/styles.css` is imported. All three are d
 
 ## Theming
 
-The stylesheet declares every token as a `--color-*` custom property on `:root`, with coordinated dark-mode values under `[data-theme-mode='dark']`:
+The stylesheet declares every token as a `--color-*` custom property on `:root`, with coordinated dark-mode values under `[data-theme-mode='dark']`. It also exposes non-color design tokens on `:root`:
 
 ```css
 :root {
@@ -40,6 +40,12 @@ The stylesheet declares every token as a `--color-*` custom property on `:root`,
   --color-surface: #ffffff;
   --color-text: #14161a;
   /* … */
+  --nq-radius: 10px;
+  --nq-font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --nq-shadow-md: 0 2px 6px rgba(20, 22, 26, 0.1), 0 12px 24px -12px rgba(20, 22, 26, 0.25);
+  --nq-duration: 160ms;
+  --nq-easing: ease;
+  --nq-space-2: 8px;
 }
 ```
 
@@ -49,6 +55,8 @@ Override any token on `:root` to re-theme the whole kit — no provider needed:
 :root {
   --color-primary: #0ea5e9;
   --color-text: #0f172a;
+  --nq-radius: 12px;
+  --nq-font-sans: Inter, system-ui, sans-serif;
 }
 ```
 
