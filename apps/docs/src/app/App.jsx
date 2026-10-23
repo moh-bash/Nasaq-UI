@@ -1,6 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes, useParams } from 'react-router-dom';
-import { ThemeProvider, useTheme } from '../providers/ThemeProvider.jsx';
-import { StylingModeProvider } from '../providers/StylingModeProvider.jsx';
+import { useTheme } from '../hooks/useTheme.js';
 import SiteLayout from './SiteLayout.jsx';
 import DocsShell from '../layouts/DocsShell.jsx';
 import ComponentLayout from '../layouts/ComponentLayout.jsx';
@@ -38,9 +37,9 @@ function PlaygroundComponentRedirect() {
 }
 
 function ThemedApp() {
-  const { theme, overridesStyle } = useTheme();
+  const { overridesStyle, resolvedMode } = useTheme();
   return (
-    <div className={styles.root} data-theme-mode={theme.mode} style={overridesStyle}>
+    <div className={styles.root} data-theme-mode={resolvedMode} style={overridesStyle}>
       <Routes>
         {/* Marketing / wrappers */}
         <Route element={<SiteLayout />}>
@@ -75,11 +74,7 @@ function ThemedApp() {
 export default function App() {
   return (
     <BrowserRouter>
-      <ThemeProvider>
-        <StylingModeProvider>
-          <ThemedApp />
-        </StylingModeProvider>
-      </ThemeProvider>
+      <ThemedApp />
     </BrowserRouter>
   );
 }

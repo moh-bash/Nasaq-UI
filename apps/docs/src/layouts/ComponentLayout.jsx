@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Outlet, useParams } from 'react-router-dom';
 import { getComponent, getReadyComponent } from '../registry/componentRegistry.js';
-import { setLastComponent } from '../utils/shellStorage.js';
+import { useShellStore } from '../stores/shellStore.js';
 import styles from './ComponentLayout.module.css';
 
 /*
@@ -12,12 +12,11 @@ export default function ComponentLayout() {
   const { componentId } = useParams();
   const component = getComponent(componentId);
   const ready = getReadyComponent(componentId);
+  const setLastComponent = useShellStore((state) => state.setLastComponent);
 
   useEffect(() => {
-    if (component && ready) {
-      setLastComponent(component.id);
-    }
-  }, [component, ready]);
+    if (component && ready) setLastComponent(component.id);
+  }, [component, ready, setLastComponent]);
 
   if (!component) {
     return <Outlet />;

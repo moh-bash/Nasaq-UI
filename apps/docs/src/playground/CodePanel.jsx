@@ -3,6 +3,7 @@ import Prism from 'prismjs';
 import 'prismjs/components/prism-jsx';
 import { Check, ChevronDown, ChevronUp, Copy, FileCode2 } from 'lucide-react';
 import { useClipboard } from '../hooks/useClipboard.js';
+import { usePlaygroundStore } from '../stores/playgroundStore.js';
 import styles from './CodePanel.module.css';
 
 function highlight(code, language) {
@@ -34,8 +35,10 @@ export default function CodePanel({ output, jsx, css, componentSource, themeCss,
   const defaults = { usage: jsx || '', css: css || '', component: componentSource || '', theme: themeCss || '' };
   const fileMap = new Map((output?.files || []).map((file) => [file.id, file]));
   const [tab, setTab] = useState(() => tabs[0]?.id || 'usage');
-  const [height, setHeight] = useState(268);
-  const [collapsed, setCollapsed] = useState(false);
+  const height = usePlaygroundStore((state) => state.codePanelHeight);
+  const collapsed = usePlaygroundStore((state) => state.codePanelCollapsed);
+  const setHeight = usePlaygroundStore((state) => state.setCodePanelHeight);
+  const setCollapsed = usePlaygroundStore((state) => state.setCodePanelCollapsed);
   const { copy, status } = useClipboard();
   const dragRef = useRef(null);
 
@@ -66,7 +69,7 @@ export default function CodePanel({ output, jsx, css, componentSource, themeCss,
     dragRef.current = null;
   };
 
-  const nudge = (delta) => setHeight((value) => Math.min(560, Math.max(120, value + delta)));
+  const nudge = (delta) => setHeight(height + delta);
 
   const fileName = activeFile?.filename || activeFile?.label || files?.css || files?.jsx || 'code';
 
@@ -155,7 +158,7 @@ export default function CodePanel({ output, jsx, css, componentSource, themeCss,
           type="button"
           className={styles.action}
           aria-expanded={!collapsed}
-          onClick={() => setCollapsed((value) => !value)}
+          onClick={() => setCollapsed(!collapsed)}
         >
           {collapsed ? <ChevronUp size={12} aria-hidden="true" /> : <ChevronDown size={12} aria-hidden="true" />}
           <span className="visually-hidden">{collapsed ? 'Expand code panel' : 'Collapse code panel'}</span>

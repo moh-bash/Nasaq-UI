@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { THEME_TOKENS, THEME_VERSION, themeDefaults } from 'nasaq';
 import { readyComponents } from '../registry/componentRegistry.js';
-import { useTheme } from '../providers/ThemeProvider.jsx';
+import { useTheme } from '../hooks/useTheme.js';
 import ThemeEditor from '../playground/ThemeEditor.jsx';
 import ComponentPreview from '../components/ui/ComponentPreview.jsx';
 import CodeBlock from '../components/docs/CodeBlock.jsx';

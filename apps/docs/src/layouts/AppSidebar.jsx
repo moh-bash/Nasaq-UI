@@ -13,11 +13,7 @@ import {
 } from 'lucide-react';
 import { NavLink, useMatch, useNavigate } from 'react-router-dom';
 import { buildSidebarSections, countPlanned, countReady } from '../navigation/docs-nav.js';
-import {
-  getExpandedComponents,
-  getLastView,
-  setExpandedComponents,
-} from '../utils/shellStorage.js';
+import { useShellStore } from '../stores/shellStore.js';
 import { useShell } from './useShell.js';
 import { paths, routePatterns } from '../routes.js';
 import styles from './AppSidebar.module.css';
@@ -89,7 +85,10 @@ export default function AppSidebar() {
   const onComponentRoute = Boolean(playgroundMatch || docsMatch);
 
   const [query, setQuery] = useState('');
-  const [expanded, setExpanded] = useState(() => new Set(getExpandedComponents()));
+  const expanded = useShellStore((state) => state.expandedComponentIds);
+  const toggleExpanded = useShellStore((state) => state.toggleExpanded);
+  const setNodeExpanded = useShellStore((state) => state.setExpanded);
+  const getLastView = useShellStore((state) => state.getLastView);
   const navRef = useRef(null);
   const searchRef = useRef(null);
   const typeahead = useRef({ buffer: '', at: 0 });
@@ -105,32 +104,25 @@ export default function AppSidebar() {
     return next;
   }, [expanded, activeId, filtered.matches]);
 
-  const updateExpanded = useCallback((id) => {
-    setExpanded((current) => {
-      const next = new Set(current);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      setExpandedComponents(next);
-      return next;
-    });
-  }, []);
+  const updateExpanded = toggleExpanded;
 
-  const collapseSection = useCallback((id) => {
-    setExpanded((current) => {
-      if (!current.has(id)) return current;
-      const next = new Set(current);
-      next.delete(id);
-      setExpandedComponents(next);
-      return next;
-    });
-  }, []);
+  const collapseSection = useCallback(
+    (id) => {
+      setNodeExpanded(id, false);
+    },
+    [setNodeExpanded],
+  );
 
   const targetFor = useCallback(
     (componentId) => {
-      const remembered = onComponentRoute ? currentView : getLastView(componentId) || view || 'docs';
-      return remembered === 'playground' ? paths.playground(componentId) : paths.componentDocs(componentId);
+      const remembered = onComponentRoute
+        ? currentView
+        : getLastView(componentId) || view || 'docs';
+      return remembered === 'playground'
+        ? paths.playground(componentId)
+        : paths.componentDocs(componentId);
     },
-    [currentView, onComponentRoute, view],
+    [currentView, getLastView, onComponentRoute, view],
   );
 
   const goToComponent = useCallback(

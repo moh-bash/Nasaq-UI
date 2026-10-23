@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ArrowDown, ArrowUp, ChevronRight, Plus, RotateCcw, Trash2 } from 'lucide-react';
 import { getPath } from '../utils/validateConfig.js';
 import { makeItemId } from '../utils/ids.js';
-import { useTheme } from '../providers/ThemeProvider.jsx';
+import { useTheme } from '../hooks/useTheme.js';
 import { PropertyControl, Switch } from './PropertyControl.jsx';
 import ThemeEditor from './ThemeEditor.jsx';
 import controls from './controls.module.css';

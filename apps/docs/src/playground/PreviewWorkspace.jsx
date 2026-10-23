@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Grid3x3,
@@ -15,6 +14,7 @@ import PresetPicker from './PresetPicker.jsx';
 import ViewportSwitcher from './ViewportSwitcher.jsx';
 import ExportToolbar from './ExportToolbar.jsx';
 import controls from './controls.module.css';
+import { usePlaygroundStore } from '../stores/playgroundStore.js';
 import { paths } from '../routes.js';
 import styles from './PreviewWorkspace.module.css';
 
@@ -49,8 +49,10 @@ export default function PreviewWorkspace({
   lastChange,
   onToggleInspector,
 }) {
-  const [viewport, setViewport] = useState('desktop');
-  const [background, setBackground] = useState('grid');
+  const viewport = usePlaygroundStore((state) => state.viewport);
+  const background = usePlaygroundStore((state) => state.background);
+  const setViewport = usePlaygroundStore((state) => state.setViewport);
+  const setBackground = usePlaygroundStore((state) => state.setBackground);
 
   return (
     <section className={styles.workspace} aria-label="Live preview workspace">

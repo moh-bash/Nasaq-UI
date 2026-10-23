@@ -5,8 +5,8 @@ import { getComponent, getReadyComponent, readyComponents } from '../registry/co
 import ComponentPreview from '../components/ui/ComponentPreview.jsx';
 import PropTable from '../components/docs/PropTable.jsx';
 import CodeBlock from '../components/docs/CodeBlock.jsx';
-import { useTheme } from '../providers/ThemeProvider.jsx';
-import { setLastView } from '../utils/shellStorage.js';
+import { useTheme } from '../hooks/useTheme.js';
+import { useShellStore } from '../stores/shellStore.js';
 import { paths } from '../routes.js';
 import styles from './page.module.css';
 
@@ -15,10 +15,11 @@ export default function ComponentDocsPage() {
   const component = getComponent(componentId);
   const ready = getReadyComponent(componentId);
   const { resolved } = useTheme();
+  const setLastView = useShellStore((state) => state.setLastView);
 
   useEffect(() => {
     if (ready) setLastView(ready.id, 'docs');
-  }, [ready]);
+  }, [ready, setLastView]);
 
   const usage = useMemo(() => {
     if (!ready) return '';

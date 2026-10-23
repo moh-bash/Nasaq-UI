@@ -1,17 +1,15 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../app/App.jsx';
+import { useShellStore } from '../stores/shellStore.js';
+import { readJSON } from '../stores/safeStorage.js';
 
 function sidebar() {
   return screen.getByRole('navigation', { name: 'Documentation' });
 }
 
 describe('App shell', () => {
-  beforeEach(() => {
-    window.localStorage.clear();
-  });
-
   it('renders the landing page and points to the docs start page', () => {
     window.history.pushState({}, '', '/');
     render(<App />);
@@ -138,7 +136,7 @@ describe('App shell', () => {
 
   it('lands on the last used view for a component from another section', async () => {
     const user = userEvent.setup();
-    window.localStorage.setItem('nq.shell.view.button', 'playground');
+    useShellStore.getState().setLastView('button', 'playground');
     window.history.pushState({}, '', '/docs/theming');
     render(<App />);
 
@@ -154,10 +152,12 @@ describe('App shell', () => {
     const collapseBtn = await screen.findByRole('button', { name: /collapse sidebar/i });
     await user.click(collapseBtn);
 
-    expect(window.localStorage.getItem('nq.shell.sidebar')).toBe('collapsed');
+    expect(useShellStore.getState().sidebarCollapsed).toBe(true);
+    expect(readJSON('nq.shell.v1').state.sidebarCollapsed).toBe(true);
     const expandBtn = await screen.findByRole('button', { name: /expand sidebar/i });
     await user.click(expandBtn);
-    expect(window.localStorage.getItem('nq.shell.sidebar')).toBe('expanded');
+    expect(useShellStore.getState().sidebarCollapsed).toBe(false);
+    expect(readJSON('nq.shell.v1').state.sidebarCollapsed).toBe(false);
   });
 
   it('filters the sidebar and keeps the matching component expanded', async () => {

@@ -1,12 +1,12 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { buildOutput } from '../generators/index.js';
 import { useComponentConfig } from '../hooks/useComponentConfig.js';
 import { useMediaQuery } from '../hooks/useMediaQuery.js';
-import { useTheme } from '../providers/ThemeProvider.jsx';
-import { useStylingMode } from '../providers/StylingModeProvider.jsx';
+import { useTheme } from '../hooks/useTheme.js';
+import { useStylingMode } from '../hooks/useStylingMode.js';
 import PreviewWorkspace from './PreviewWorkspace.jsx';
 import PropertiesPanel from './PropertiesPanel.jsx';
-import { useShell } from '../layouts/useShell.js';
+import { useShellStore } from '../stores/shellStore.js';
 import styles from './Studio.module.css';
 
 /* The full studio for one component: live preview + code, inspector.
@@ -14,7 +14,9 @@ import styles from './Studio.module.css';
 export default function Playground({ component }) {
   const { resolved } = useTheme();
   const { mode: stylingMode, setMode: setStylingMode } = useStylingMode();
-  const shell = useShell();
+  const closeMobileDrawer = useShellStore((state) => state.closeMobileDrawer);
+  const inspectorPreference = useShellStore((state) => state.inspectorOpen);
+  const setInspectorOpen = useShellStore((state) => state.setInspectorOpen);
 
   const {
     config,
@@ -31,24 +33,20 @@ export default function Playground({ component }) {
   } = useComponentConfig(component);
 
   const isNarrow = useMediaQuery('(max-width: 1080px)');
-  const [prefs, setPrefs] = useState(null);
-  const prefsApply = prefs !== null && prefs.narrow === isNarrow;
-  const inspectorOpen = prefsApply ? prefs.inspector : !isNarrow;
-  const setPanelPrefs = (patch) => setPrefs({ narrow: isNarrow, inspector: inspectorOpen, ...patch });
+  const inspectorOpen = inspectorPreference ?? !isNarrow;
+  const setPanelOpen = (open) => setInspectorOpen(open);
 
   useEffect(() => {
     if (!isNarrow) return undefined;
     const onKeyDown = (event) => {
       if (event.key === 'Escape') {
-        setPrefs({ narrow: true, inspector: false });
-      }
-      if (event.key === 'Escape' && shell?.closeMobileDrawer) {
-        shell.closeMobileDrawer();
+        setInspectorOpen(false);
+        closeMobileDrawer();
       }
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [isNarrow, shell]);
+  }, [closeMobileDrawer, isNarrow, setInspectorOpen]);
 
   const previewCss = useMemo(() => {
     const output = component.generators.css(config, resolved);
@@ -62,8 +60,8 @@ export default function Playground({ component }) {
 
   const drawerOpen = inspectorOpen && isNarrow;
   const closeDrawers = () => {
-    setPrefs({ narrow: true, inspector: false });
-    if (shell?.closeMobileDrawer) shell.closeMobileDrawer();
+    setInspectorOpen(false);
+    closeMobileDrawer();
   };
 
   return (
@@ -87,7 +85,7 @@ export default function Playground({ component }) {
           onRestorePreset={restorePreset}
           onResetAll={resetAll}
           lastChange={lastChange}
-          onToggleInspector={() => setPanelPrefs({ inspector: !inspectorOpen })}
+          onToggleInspector={() => setPanelOpen(!inspectorOpen)}
         />
       </main>
 

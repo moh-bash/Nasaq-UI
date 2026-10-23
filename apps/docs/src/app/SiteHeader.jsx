@@ -1,8 +1,9 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, MoonStar, Search, SunMedium } from 'lucide-react';
-import { useTheme } from '../providers/ThemeProvider.jsx';
+import { useTheme } from '../hooks/useTheme.js';
 import Logo from '../playground/Logo.jsx';
-import { useShellOptional } from '../layouts/useShell.js';
+import { useShell } from '../layouts/useShell.js';
 import styles from './SiteHeader.module.css';
 
 const GITHUB_URL = 'https://github.com/moh-bash/Nasaq-UI';
@@ -19,22 +20,35 @@ function GitHubMark({ size = 16 }) {
 }
 
 export default function SiteHeader() {
-  const { theme, setMode } = useTheme();
-  const shell = useShellOptional();
-  const isDark = theme.mode === 'dark';
+  const { resolvedMode, setMode } = useTheme();
+  const shell = useShell();
+  const { inDocs, isNarrow, mobileOpen, focusSidebarSearch } = shell;
+  const isDark = resolvedMode === 'dark';
+
+  useEffect(() => {
+    if (!inDocs) return undefined;
+    const onKeyDown = (event) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        focusSidebarSearch();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [focusSidebarSearch, inDocs]);
 
   return (
     <header className={styles.header}>
-      {shell?.isNarrow ? (
+      {inDocs && isNarrow ? (
         <button
           type="button"
           id="shell-mobile-trigger"
           className={styles.iconButton}
           aria-label="Open documentation menu"
-          aria-expanded={shell.mobileOpen}
+          aria-expanded={mobileOpen}
           aria-controls="docs-sidebar"
           title="Open documentation menu"
-          onClick={(event) => shell.openMobileDrawer(event.currentTarget)}
+          onClick={shell.openMobileDrawer}
         >
           <Menu size={18} aria-hidden="true" />
         </button>
@@ -49,11 +63,12 @@ export default function SiteHeader() {
       </Link>
 
       <div className={styles.actions}>
-        {shell ? (
+        {inDocs ? (
           <button
             type="button"
             className={styles.searchTrigger}
-            onClick={() => shell.focusSidebarSearch()}
+            onClick={focusSidebarSearch}
+            aria-label="Search documentation"
             aria-keyshortcuts="Control+K Meta+K"
             title="Search components"
           >
