@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { getComponent, getReadyComponent, readyComponents } from '../registry/componentRegistry.js';
@@ -6,6 +6,7 @@ import ComponentPreview from '../components/ui/ComponentPreview.jsx';
 import PropTable from '../components/docs/PropTable.jsx';
 import CodeBlock from '../components/docs/CodeBlock.jsx';
 import { useTheme } from '../providers/ThemeProvider.jsx';
+import { setLastView } from '../utils/shellStorage.js';
 import { paths } from '../routes.js';
 import styles from './page.module.css';
 
@@ -14,6 +15,10 @@ export default function ComponentDocsPage() {
   const component = getComponent(componentId);
   const ready = getReadyComponent(componentId);
   const { resolved } = useTheme();
+
+  useEffect(() => {
+    if (ready) setLastView(ready.id, 'docs');
+  }, [ready]);
 
   const usage = useMemo(() => {
     if (!ready) return '';

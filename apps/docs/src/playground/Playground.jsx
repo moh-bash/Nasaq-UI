@@ -15,19 +15,6 @@ export default function Playground({ component }) {
   const { resolved } = useTheme();
   const { mode: stylingMode, setMode: setStylingMode } = useStylingMode();
   const shell = useShell();
-  const onToggleSidebar = shell
-    ? () => {
-        if (shell.isNarrow) {
-          if (shell.mobileOpen) {
-            shell.closeMobileDrawer();
-          } else {
-            shell.openMobileDrawer();
-          }
-        } else {
-          shell.toggleCollapsed();
-        }
-      }
-    : () => {};
 
   const {
     config,
@@ -79,8 +66,6 @@ export default function Playground({ component }) {
     if (shell?.closeMobileDrawer) shell.closeMobileDrawer();
   };
 
-  const sidebarOpenForWorkspace = shell ? (!shell.collapsed || (shell.isNarrow && shell.mobileOpen)) : true;
-
   return (
     <div
       className={styles.studio}
@@ -102,8 +87,6 @@ export default function Playground({ component }) {
           onRestorePreset={restorePreset}
           onResetAll={resetAll}
           lastChange={lastChange}
-          sidebarOpen={sidebarOpenForWorkspace}
-          onToggleSidebar={onToggleSidebar}
           onToggleInspector={() => setPanelPrefs({ inspector: !inspectorOpen })}
         />
       </main>

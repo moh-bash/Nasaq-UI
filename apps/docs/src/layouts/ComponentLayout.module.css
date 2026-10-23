@@ -5,40 +5,6 @@
   min-height: 0;
 }
 
-.tabBar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 28px 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--ui-ink) 8%, transparent);
-}
-
-.tab,
-.tabActive {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border-radius: 999px;
-  padding: 6px 14px;
-  text-decoration: none;
-  font-size: 13px;
-  margin-bottom: -1px;
-}
-
-.tab {
-  color: color-mix(in srgb, var(--ui-ink) 72%, transparent);
-}
-
-.tab:hover {
-  color: var(--ui-ink);
-}
-
-.tabActive {
-  color: var(--ui-ink);
-  border: 1px solid color-mix(in srgb, var(--ui-ink) 10%, transparent);
-  border-bottom-color: var(--ui-paper);
-}
-
 .content {
   flex: 1;
   min-height: 0;

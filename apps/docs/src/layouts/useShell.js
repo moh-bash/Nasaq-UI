@@ -8,3 +8,8 @@ export function useShell() {
   }
   return ctx;
 }
+
+/* The header is shared with the marketing layout, which has no shell. */
+export function useShellOptional() {
+  return useContext(ShellContext);
+}

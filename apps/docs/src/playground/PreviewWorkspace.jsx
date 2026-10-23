@@ -4,7 +4,6 @@ import {
   Grid3x3,
   LayoutGrid,
   Moon,
-  PanelLeftOpen,
   PanelRight,
   RotateCcw,
   Square,
@@ -48,8 +47,6 @@ export default function PreviewWorkspace({
   onRestorePreset,
   onResetAll,
   lastChange,
-  sidebarOpen,
-  onToggleSidebar,
   onToggleInspector,
 }) {
   const [viewport, setViewport] = useState('desktop');
@@ -59,27 +56,13 @@ export default function PreviewWorkspace({
     <section className={styles.workspace} aria-label="Live preview workspace">
       <header className={styles.head}>
         <div className={styles.headTop}>
-          {!sidebarOpen ? (
-            <button
-              type="button"
-              className={controls.panelToggle}
-              onClick={onToggleSidebar}
-              aria-expanded={false}
-              aria-label="Open sidebar"
-              title="Open sidebar"
-            >
-              <PanelLeftOpen size={15} aria-hidden="true" />
-              <span>Menu</span>
-            </button>
-          ) : null}
-
           <div className={styles.identity}>
             <h1 className={styles.name}>{component.name}</h1>
             <p className={styles.description}>{component.description}</p>
           </div>
 
-          <Link to={paths.componentDocs(component.id)} className={controls.btn}>
-            Docs &amp; props
+          <Link to={paths.componentDocs(component.id)} className={styles.viewDocs}>
+            View docs
           </Link>
 
           {lastChange ? (

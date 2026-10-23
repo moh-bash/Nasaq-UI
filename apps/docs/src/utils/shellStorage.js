@@ -1,5 +1,7 @@
 const KEY_LAST_COMPONENT = 'nq.shell.lastComponent';
 const KEY_SIDEBAR = 'nq.shell.sidebar';
+const KEY_EXPANDED = 'nq.shell.expanded';
+const VIEW_PREFIX = 'nq.shell.view.';
 
 function safeGet(key) {
   try {
@@ -37,6 +39,36 @@ export function getSidebarState() {
 
 export function setSidebarState(state) {
   safeSet(KEY_SIDEBAR, state === 'collapsed' ? 'collapsed' : 'expanded');
+}
+
+/* The view a component was last visited in. Falls back to docs. */
+export function getLastView(componentId) {
+  const value = safeGet(`${VIEW_PREFIX}${componentId}`);
+  return value === 'playground' ? 'playground' : value === 'docs' ? 'docs' : null;
+}
+
+export function setLastView(componentId, view) {
+  if (!componentId) return;
+  safeSet(`${VIEW_PREFIX}${componentId}`, view === 'playground' ? 'playground' : 'docs');
+}
+
+export function getExpandedComponents() {
+  const raw = safeGet(KEY_EXPANDED);
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter((id) => typeof id === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+
+export function setExpandedComponents(ids) {
+  try {
+    safeSet(KEY_EXPANDED, JSON.stringify([...new Set(ids)]));
+  } catch {
+    /* ignore */
+  }
 }
 
 export function getFirstReadyComponentId(registry) {

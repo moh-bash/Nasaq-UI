@@ -45,6 +45,21 @@
   text-overflow: ellipsis;
 }
 
+.viewDocs {
+  flex: none;
+  font-size: var(--text-12);
+  font-weight: 600;
+  color: var(--ui-ink-2);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.viewDocs:hover {
+  color: var(--color-primary);
+  border-bottom-color: currentColor;
+}
+
 .status {
   flex: none;
   font-family: var(--font-mono);
