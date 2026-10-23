@@ -15,7 +15,7 @@ describe('theme model', () => {
   });
 
   it('creates a light theme with no overrides', () => {
-    expect(defaultTheme()).toEqual({ version: 1, mode: 'light', overrides: {} });
+    expect(defaultTheme()).toEqual({ version: 2, mode: 'light', overrides: {} });
   });
 
   it('resolves to the light palette by default', () => {

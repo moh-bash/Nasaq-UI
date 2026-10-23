@@ -86,24 +86,24 @@ describe('Accordion', () => {
 
   it('renders two-digit indices when numbered', () => {
     const { container } = setup({ numbered: true });
-    const indices = container.querySelectorAll('.acc-index');
+    const indices = container.querySelectorAll('.nq-acc-index');
     expect(indices).toHaveLength(items.length);
     expect(indices[0].textContent).toBe('01');
   });
 
   it('renders no indicator when icon is "none"', () => {
     const { container } = setup({ icon: 'none' });
-    expect(container.querySelector('.acc-icon')).toBeNull();
+    expect(container.querySelector('.nq-acc-icon')).toBeNull();
   });
 
   it('moves the indicator before the question when iconPosition is start', () => {
     const { container } = setup({ iconPosition: 'start' });
-    expect(container.querySelector('.acc')).toHaveClass('acc--icon-start');
+    expect(container.querySelector('.nq-acc')).toHaveClass('nq-acc--icon-start');
   });
 
   it('renders no empty state by default when there are no items', () => {
     const { container } = setup({ items: [] });
-    expect(container.querySelector('.acc-empty')).toBeNull();
+    expect(container.querySelector('.nq-acc-empty')).toBeNull();
   });
 
   it('renders the optional empty state when there are no items', () => {

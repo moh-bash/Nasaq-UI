@@ -6,8 +6,8 @@ describe('Button', () => {
   it('renders the label with the default classes', () => {
     render(<Button>Save</Button>);
     const btn = screen.getByRole('button', { name: 'Save' });
-    expect(btn).toHaveClass('btn', 'btn--primary', 'btn--md', 'btn--align-start');
-    expect(btn.querySelector('.btn__label')).not.toBeNull();
+    expect(btn).toHaveClass('nq-btn', 'nq-btn--primary', 'nq-btn--md', 'nq-btn--align-start');
+    expect(btn.querySelector('.nq-btn__label')).not.toBeNull();
   });
 
   it('applies variant, size and full width', () => {
@@ -17,8 +17,8 @@ describe('Button', () => {
       </Button>,
     );
     const btn = screen.getByRole('button', { name: 'Wide' });
-    expect(btn).toHaveClass('btn--outline', 'btn--lg', 'btn--full');
-    expect(btn).not.toHaveClass('btn--align-start');
+    expect(btn).toHaveClass('nq-btn--outline', 'nq-btn--lg', 'nq-btn--full');
+    expect(btn).not.toHaveClass('nq-btn--align-start');
   });
 
   it('enters a busy loading state', () => {
@@ -26,8 +26,8 @@ describe('Button', () => {
     const btn = screen.getByRole('button', { name: 'Saving' });
     expect(btn).toBeDisabled();
     expect(btn).toHaveAttribute('aria-busy', 'true');
-    expect(container.querySelector('.btn__spinner')).not.toBeNull();
-    expect(container.querySelector('.btn__label')).not.toBeNull();
+    expect(container.querySelector('.nq-btn__spinner')).not.toBeNull();
+    expect(container.querySelector('.nq-btn__label')).not.toBeNull();
   });
 
   it('is disabled when disabled is set', () => {
@@ -41,6 +41,6 @@ describe('Button', () => {
         Go
       </Button>,
     );
-    expect(container.querySelectorAll('.btn__icon')).toHaveLength(2);
+    expect(container.querySelectorAll('.nq-btn__icon')).toHaveLength(2);
   });
 });

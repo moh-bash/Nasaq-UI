@@ -7,7 +7,7 @@ import { THEME_TOKENS } from './tokens.js';
 
 export { THEME_TOKENS };
 
-export const THEME_VERSION = 1;
+export const THEME_VERSION = 2;
 
 export const themeDefaults = {
   light: {
