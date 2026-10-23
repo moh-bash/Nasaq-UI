@@ -75,7 +75,7 @@ export default function ComponentDocsPage() {
           <h1 className={styles.docsTitle}>{component.name}</h1>
           <p className={styles.docsOverview}>{component.docs.overview}</p>
         </div>
-        <Link to={`/playground/${component.id}`} className={styles.primaryAction}>
+        <Link to={`/docs/components/${component.id}/playground`} className={styles.primaryAction}>
           Open in playground
           <ArrowRight size={16} aria-hidden="true" />
         </Link>

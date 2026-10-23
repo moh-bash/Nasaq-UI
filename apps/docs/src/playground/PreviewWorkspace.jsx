@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import {
   Grid3x3,
   LayoutGrid,
@@ -49,7 +50,6 @@ export default function PreviewWorkspace({
   sidebarOpen,
   onToggleSidebar,
   onToggleInspector,
-  onOpenDocs,
 }) {
   const [viewport, setViewport] = useState('desktop');
   const [background, setBackground] = useState('grid');
@@ -64,12 +64,11 @@ export default function PreviewWorkspace({
               className={controls.panelToggle}
               onClick={onToggleSidebar}
               aria-expanded={false}
-              aria-controls="component-explorer"
-              aria-label="Open component explorer"
-              title="Open component explorer"
+              aria-label="Open sidebar"
+              title="Open sidebar"
             >
               <PanelLeftOpen size={15} aria-hidden="true" />
-              <span>Explorer</span>
+              <span>Menu</span>
             </button>
           ) : null}
 
@@ -78,9 +77,9 @@ export default function PreviewWorkspace({
             <p className={styles.description}>{component.description}</p>
           </div>
 
-          <button type="button" className={controls.btn} onClick={onOpenDocs}>
+          <Link to={`/docs/components/${component.id}`} className={controls.btn}>
             Docs &amp; props
-          </button>
+          </Link>
 
           {lastChange ? (
             <div key={lastChange.id} className={styles.status} role="status" aria-live="polite">

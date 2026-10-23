@@ -34,11 +34,11 @@ export default function Button({
   ...rest
 }) {
   const classes = [
-    'btn',
-    `btn--${variant}`,
-    `btn--${size}`,
-    fullWidth ? 'btn--full' : `btn--align-${align}`,
-    loading ? 'is-loading' : '',
+    'nq-btn',
+    `nq-btn--${variant}`,
+    `nq-btn--${size}`,
+    fullWidth ? 'nq-btn--full' : `nq-btn--align-${align}`,
+    loading ? 'nq-is-loading' : '',
     className,
   ]
     .filter(Boolean)
@@ -56,15 +56,15 @@ export default function Button({
       {...rest}
     >
       {loading ? (
-        <span className="btn__spinner" aria-hidden="true" />
+        <span className="nq-btn__spinner" aria-hidden="true" />
       ) : hasLeading ? (
-        <span className="btn__icon" aria-hidden="true">
+        <span className="nq-btn__icon" aria-hidden="true">
           {leadingIcon}
         </span>
       ) : null}
-      {children ? <span className="btn__label">{children}</span> : null}
+      {children ? <span className="nq-btn__label">{children}</span> : null}
       {hasTrailing ? (
-        <span className="btn__icon" aria-hidden="true">
+        <span className="nq-btn__icon" aria-hidden="true">
           {trailingIcon}
         </span>
       ) : null}

@@ -14,19 +14,19 @@ export default function Tabs({
     : items[0]?.id || '';
   const [activeId, setActiveId] = useState(initial);
   const activeItem = items.find((item) => item.id === activeId) || items[0];
-  const rootClass = ['tabs', `tabs--${variant}`, `tabs--align-${align}`, className].filter(Boolean).join(' ');
+  const rootClass = ['nq-tabs', `nq-tabs--${variant}`, `nq-tabs--align-${align}`, className].filter(Boolean).join(' ');
 
   if (!items.length) {
     return (
       <div className={rootClass}>
-        {emptyState ? <div className="tabs-empty">{emptyState}</div> : null}
+        {emptyState ? <div className="nq-tabs-empty">{emptyState}</div> : null}
       </div>
     );
   }
 
   return (
     <div className={rootClass}>
-      <div className="tabs-list" role="tablist" aria-label="Content tabs">
+      <div className="nq-tabs-list" role="tablist" aria-label="Content tabs">
         {items.map((item) => {
           const selected = item.id === activeItem?.id;
           return (
@@ -61,7 +61,7 @@ export default function Tabs({
       </div>
       <div
         id={`${uid}-panel-${activeItem.id}`}
-        className="tabs-panel"
+        className="nq-tabs-panel"
         role="tabpanel"
         aria-labelledby={`${uid}-tab-${activeItem.id}`}
         tabIndex={0}

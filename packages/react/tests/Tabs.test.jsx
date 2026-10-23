@@ -17,7 +17,7 @@ describe('Tabs', () => {
 
   it('renders no empty state by default when there are no items', () => {
     const { container } = render(<Tabs items={[]} />);
-    expect(container.querySelector('.tabs-empty')).toBeNull();
+    expect(container.querySelector('.nq-tabs-empty')).toBeNull();
   });
 
   it('renders the optional empty state when there are no items', () => {
