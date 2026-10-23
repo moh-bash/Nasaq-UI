@@ -13,6 +13,7 @@ import ThemingPage from '../pages/ThemingPage.jsx';
 import InstallationPage from '../pages/InstallationPage.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
 import { getReadyComponent, readyComponents } from '../registry/componentRegistry.js';
+import { paths, routePatterns } from '../routes.js';
 import styles from './App.module.css';
 
 /* Rewrites a target path, substituting :params from the matched route. */
@@ -24,16 +25,16 @@ function Redirect({ to }) {
 
 function PlaygroundRedirect() {
   const first = readyComponents.find((c) => c.id === 'accordion')?.id || readyComponents[0]?.id || 'accordion';
-  return <Navigate to={`/docs/components/${first}/playground`} replace />;
+  return <Navigate to={paths.playground(first)} replace />;
 }
 
 function PlaygroundComponentRedirect() {
   const { componentId } = useParams();
   const component = getReadyComponent(componentId);
   if (!component) {
-    return <Navigate to="/docs/components" replace />;
+    return <Navigate to={paths.components} replace />;
   }
-  return <Navigate to={`/docs/components/${componentId}/playground`} replace />;
+  return <Navigate to={paths.playground(componentId)} replace />;
 }
 
 function ThemedApp() {
@@ -60,9 +61,9 @@ function ThemedApp() {
         </Route>
 
         {/* Old URLs keep working and land on their new docs home. */}
-        <Route path="components" element={<Navigate to="/docs/components" replace />} />
-        <Route path="components/:componentId" element={<Redirect to="/docs/components/:componentId" />} />
-        <Route path="theme" element={<Navigate to="/docs/theming" replace />} />
+        <Route path="components" element={<Navigate to={paths.components} replace />} />
+        <Route path="components/:componentId" element={<Redirect to={routePatterns.component} />} />
+        <Route path="theme" element={<Navigate to={paths.theming} replace />} />
 
         <Route path="playground" element={<PlaygroundRedirect />} />
         <Route path="playground/:componentId" element={<PlaygroundComponentRedirect />} />

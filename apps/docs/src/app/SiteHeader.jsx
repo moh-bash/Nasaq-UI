@@ -4,6 +4,7 @@ import { useTheme } from '../providers/ThemeProvider.jsx';
 import Logo from '../playground/Logo.jsx';
 import { getFirstReadyComponentId } from '../utils/shellStorage.js';
 import { readyComponents } from '../registry/componentRegistry.js';
+import { paths, routePatterns } from '../routes.js';
 import styles from './SiteHeader.module.css';
 
 const GITHUB_URL = 'https://github.com/moh-bash/Nasaq-UI';
@@ -31,11 +32,11 @@ function getStoredLastComponent() {
 export default function SiteHeader() {
   const { theme, setMode } = useTheme();
   const isDark = theme.mode === 'dark';
-  const isPlayground = !!useMatch('/docs/components/:componentId/playground');
+  const isPlayground = !!useMatch(routePatterns.playground);
   const stored = getStoredLastComponent();
   const fallback = getFirstReadyComponentId({ readyComponents });
   const last = stored && readyComponents.find((c) => c.id === stored) ? stored : fallback;
-  const playgroundTo = `/docs/components/${last}/playground`;
+  const playgroundTo = paths.playground(last);
 
   return (
     <header className={styles.header}>
@@ -48,7 +49,7 @@ export default function SiteHeader() {
       </Link>
 
       <nav className={styles.nav} aria-label="Primary">
-        <NavLink to="/docs" end className={({ isActive }) => (isActive && !isPlayground ? styles.active : styles.link)}>
+        <NavLink to={paths.docs} end className={({ isActive }) => (isActive && !isPlayground ? styles.active : styles.link)}>
           Docs
         </NavLink>
         <NavLink

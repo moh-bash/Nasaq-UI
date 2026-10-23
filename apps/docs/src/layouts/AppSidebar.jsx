@@ -2,14 +2,15 @@ import { useMemo, useState } from 'react';
 import { Blocks, PanelLeftClose, Search } from 'lucide-react';
 import { NavLink, useMatch } from 'react-router-dom';
 import { buildSidebarSections, countPlanned, countReady } from '../navigation/docs-nav.js';
-import { useShell } from './ShellContext.jsx';
+import { useShell } from './useShell.js';
+import { paths, routePatterns } from '../routes.js';
 import styles from './AppSidebar.module.css';
 
 export default function AppSidebar() {
   const [query, setQuery] = useState('');
   const sections = useMemo(() => buildSidebarSections(), []);
   const { collapsed, toggleCollapsed, closeMobileDrawer } = useShell();
-  const isPlaygroundView = !!useMatch('/docs/components/:componentId/playground');
+  const isPlaygroundView = !!useMatch(routePatterns.playground);
 
   const filteredSections = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -51,9 +52,9 @@ export default function AppSidebar() {
 
   const getComponentTo = (componentId) => {
     if (isPlaygroundView) {
-      return `/docs/components/${componentId}/playground`;
+      return paths.playground(componentId);
     }
-    return `/docs/components/${componentId}`;
+    return paths.componentDocs(componentId);
   };
 
   return (

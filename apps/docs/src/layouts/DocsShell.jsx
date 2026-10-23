@@ -1,34 +1,35 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Outlet, useMatch } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Outlet, useLocation, useMatch } from 'react-router-dom';
 import SiteHeader from '../app/SiteHeader.jsx';
 import AppSidebar from './AppSidebar.jsx';
 import { ShellProvider } from './ShellContext.jsx';
 import { getSidebarState, setSidebarState } from '../utils/shellStorage.js';
 import { useMediaQuery } from '../hooks/useMediaQuery.js';
+import { routePatterns } from '../routes.js';
 import styles from './DocsShell.module.css';
 
 export default function DocsShell() {
   const isNarrow = useMediaQuery('(max-width: 1080px)');
   const stored = typeof window !== 'undefined' ? getSidebarState() : null;
   const [collapsed, setCollapsed] = useState(stored === 'collapsed');
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const location = useLocation();
+  /* Drawer state is tied to the pathname that opened it: navigating closes the
+     drawer without an effect, so there is no cascading render. */
+  const [drawer, setDrawer] = useState({ open: false, path: location.pathname });
+  const mobileOpen = drawer.open && drawer.path === location.pathname;
 
-  const isPlaygroundView = !!useMatch('/docs/components/:componentId/playground');
+  const isPlaygroundView = !!useMatch(routePatterns.playground);
 
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [isPlaygroundView]); // eslint-disable-line react-hooks/set-state-in-effect
-
-  const toggleCollapsed = () => {
+  const toggleCollapsed = useCallback(() => {
     setCollapsed((prev) => {
       const next = !prev;
       setSidebarState(next ? 'collapsed' : 'expanded');
       return next;
     });
-  };
+  }, []);
 
-  const openMobileDrawer = () => setMobileOpen(true);
-  const closeMobileDrawer = () => setMobileOpen(false);
+  const openMobileDrawer = useCallback(() => setDrawer({ open: true, path: location.pathname }), [location.pathname]);
+  const closeMobileDrawer = useCallback(() => setDrawer({ open: false, path: location.pathname }), [location.pathname]);
 
   const value = useMemo(
     () => ({
@@ -40,14 +41,14 @@ export default function DocsShell() {
       isNarrow,
       view: isPlaygroundView ? 'playground' : 'docs',
     }),
-    [collapsed, mobileOpen, isNarrow, isPlaygroundView],
+    [collapsed, toggleCollapsed, mobileOpen, openMobileDrawer, closeMobileDrawer, isNarrow, isPlaygroundView],
   );
 
   useEffect(() => {
     if (!isNarrow) return undefined;
     const onKeyDown = (event) => {
       if (event.key === 'Escape') {
-        setMobileOpen(false);
+        setDrawer((current) => ({ ...current, open: false }));
       }
     };
     window.addEventListener('keydown', onKeyDown);

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import CodeBlock from '../components/docs/CodeBlock.jsx';
+import { paths } from '../routes.js';
 import styles from './page.module.css';
 
 const INSTALL_CODE = 'npm install nasaq';
@@ -120,7 +121,7 @@ export default function InstallationPage() {
         <CodeBlock code={THEME_CODE} language="css" filename="app.css" />
         <p className={styles.sectionNote} style={{ marginTop: 12 }}>
           Every component reads its colours from the theme tokens. Override just the variables you
-          need, or see <Link to="/docs/theming">Theming</Link> for the full set and a live editor.
+          need, or see <Link to={paths.theming}>Theming</Link> for the full set and a live editor.
         </p>
       </section>
     </div>

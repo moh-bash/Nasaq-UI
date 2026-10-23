@@ -49,10 +49,16 @@ describe('generateThemeCSS', () => {
 describe('generateAccordionCSS', () => {
   it('emits the core structural rules', () => {
     const css = generateAccordionCSS(baseConfig, lightTheme);
-    expect(css).toContain('.acc {');
-    expect(css).toContain('.acc-trigger {');
-    expect(css).toContain('.acc-panel {');
+    expect(css).toContain('.nq-acc {');
+    expect(css).toContain('.nq-acc-trigger {');
+    expect(css).toContain('.nq-acc-panel {');
     expect(css).toContain('grid-template-rows: 0fr;');
+  });
+
+  it('wraps the component styles in the nasaq cascade layer', () => {
+    const css = generateAccordionCSS(baseConfig, lightTheme);
+    expect(css.trimEnd().startsWith('@layer nasaq {')).toBe(true);
+    expect(css.trimEnd().endsWith('}')).toBe(true);
   });
 
   it('uses the configured dimensions and duration', () => {
@@ -74,22 +80,22 @@ describe('generateAccordionCSS', () => {
   it('emits the numbering rule only when numbering is on', () => {
     const off = validateConfig({ content: { numbering: false } });
     const on = validateConfig({ content: { numbering: true } });
-    expect(generateAccordionCSS(off, lightTheme)).not.toContain('.acc-index {');
-    expect(generateAccordionCSS(on, lightTheme)).toContain('.acc-index {');
+    expect(generateAccordionCSS(off, lightTheme)).not.toContain('.nq-acc-index {');
+    expect(generateAccordionCSS(on, lightTheme)).toContain('.nq-acc-index {');
   });
 
   it('emits plus-icon rules only for the plus indicator', () => {
     const plus = validateConfig({ icons: { style: 'plus' } });
     const chevron = validateConfig({ icons: { style: 'chevron' } });
-    expect(generateAccordionCSS(plus, lightTheme)).toContain('.acc-plus {');
-    expect(generateAccordionCSS(chevron, lightTheme)).not.toContain('.acc-plus {');
+    expect(generateAccordionCSS(plus, lightTheme)).toContain('.nq-acc-plus {');
+    expect(generateAccordionCSS(chevron, lightTheme)).not.toContain('.nq-acc-plus {');
   });
 
   it('emits a divider rule only when dividers are enabled', () => {
     const on = validateConfig({ layout: { dividers: true } });
     const off = validateConfig({ layout: { dividers: false } });
-    expect(generateAccordionCSS(on, lightTheme)).toContain('.acc-item + .acc-item {');
-    expect(generateAccordionCSS(off, lightTheme)).not.toContain('.acc-item + .acc-item {');
+    expect(generateAccordionCSS(on, lightTheme)).toContain('.nq-acc-item + .nq-acc-item {');
+    expect(generateAccordionCSS(off, lightTheme)).not.toContain('.nq-acc-item + .nq-acc-item {');
   });
 
   it('always includes the reduced-motion block', () => {

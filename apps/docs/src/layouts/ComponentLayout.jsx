@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { NavLink, Outlet, useParams } from 'react-router-dom';
 import { getComponent, getReadyComponent } from '../registry/componentRegistry.js';
 import { setLastComponent } from '../utils/shellStorage.js';
+import { paths } from '../routes.js';
 import styles from './ComponentLayout.module.css';
 
 export default function ComponentLayout() {
@@ -26,7 +27,7 @@ export default function ComponentLayout() {
       {showPlaygroundTab ? (
         <nav className={styles.tabBar} role="tablist" aria-label="Component view">
           <NavLink
-            to={`/docs/components/${componentId}`}
+            to={paths.componentDocs(componentId)}
             end
             className={({ isActive }) => (isActive ? styles.tabActive : styles.tab)}
             role="tab"
@@ -34,7 +35,7 @@ export default function ComponentLayout() {
             Docs
           </NavLink>
           <NavLink
-            to={`/docs/components/${componentId}/playground`}
+            to={paths.playground(componentId)}
             className={({ isActive }) => (isActive ? styles.tabActive : styles.tab)}
             role="tab"
           >

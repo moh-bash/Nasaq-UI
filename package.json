@@ -18,12 +18,15 @@
     "test:watch": "npm run test:watch -w @nasaq-ui/docs",
     "lint": "npm run lint -w @nasaq-ui/docs",
     "check": "npm run check -w nasaq",
-    "coverage": "npm run coverage -w @nasaq-ui/docs"
+    "coverage": "npm run coverage -w @nasaq-ui/docs",
+    "e2e": "npm run build && playwright test",
+    "e2e:update": "npm run build && playwright test --update-snapshots"
   },
   "engines": {
     "node": ">=22"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "vitest-axe": "^0.1.0"
   }
 }

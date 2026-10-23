@@ -466,6 +466,26 @@
   overflow-x: auto;
 }
 
+.nq-tabs--align-start .nq-tabs-list {
+  justify-content: flex-start;
+}
+
+.nq-tabs--align-center .nq-tabs-list {
+  justify-content: center;
+}
+
+.nq-tabs--align-end .nq-tabs-list {
+  justify-content: flex-end;
+}
+
+.nq-tabs--align-stretch .nq-tabs-list {
+  justify-content: stretch;
+}
+
+.nq-tabs--align-stretch .nq-tabs-list button {
+  flex: 1 1 0;
+}
+
 .nq-tabs-list button {
   flex: 0 0 auto;
   border: 0;

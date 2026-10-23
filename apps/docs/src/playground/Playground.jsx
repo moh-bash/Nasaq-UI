@@ -6,7 +6,7 @@ import { useTheme } from '../providers/ThemeProvider.jsx';
 import { useStylingMode } from '../providers/StylingModeProvider.jsx';
 import PreviewWorkspace from './PreviewWorkspace.jsx';
 import PropertiesPanel from './PropertiesPanel.jsx';
-import { useShell } from '../layouts/ShellContext.jsx';
+import { useShell } from '../layouts/useShell.js';
 import styles from './Studio.module.css';
 
 /* The full studio for one component: live preview + code, inspector.

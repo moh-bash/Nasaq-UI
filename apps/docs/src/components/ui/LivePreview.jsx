@@ -28,7 +28,7 @@ export default function LivePreview({ css, className, style, children, backgroun
   }, []);
 
   return (
-    <div ref={hostRef} className={className} data-preview-bg={background} style={style}>
+    <div ref={hostRef} className={className} data-preview-bg={background} data-live-preview="" style={style}>
       {root
         ? createPortal(
             <>

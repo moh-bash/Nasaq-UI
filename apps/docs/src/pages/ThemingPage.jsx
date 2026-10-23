@@ -6,6 +6,7 @@ import { useTheme } from '../providers/ThemeProvider.jsx';
 import ThemeEditor from '../playground/ThemeEditor.jsx';
 import ComponentPreview from '../components/ui/ComponentPreview.jsx';
 import CodeBlock from '../components/docs/CodeBlock.jsx';
+import { paths } from '../routes.js';
 import styles from './page.module.css';
 
 export default function ThemingPage() {
@@ -105,7 +106,7 @@ export default function ThemingPage() {
             ))}
           </div>
           <p className={styles.sectionNote} style={{ marginTop: 16 }}>
-            Adjust a token, then <Link to="/playground/accordion">open a component</Link> to fine-tune
+            Adjust a token, then <Link to={paths.playground('accordion')}>open a component</Link> to fine-tune
             a single control or export its stylesheet.
           </p>
         </div>

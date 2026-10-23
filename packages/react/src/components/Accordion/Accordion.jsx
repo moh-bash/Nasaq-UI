@@ -163,7 +163,15 @@ export default function Accordion({
                     ) : null}
                     <span className="nq-acc-question">{item.question}</span>
                     {icon !== 'none' ? (
-                      <span className={`nq-acc-icon nq-acc-icon--${icon}`} aria-hidden="true">
+                      <span
+                        className={[
+                          'nq-acc-icon',
+                          icon === 'chevron' || icon === 'arrow' ? `nq-acc-icon--${icon}` : '',
+                        ]
+                          .filter(Boolean)
+                          .join(' ')}
+                        aria-hidden="true"
+                      >
                         <Indicator icon={icon} index={index} />
                       </span>
                     ) : null}

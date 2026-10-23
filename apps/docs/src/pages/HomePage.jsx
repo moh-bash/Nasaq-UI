@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Blocks, Code2, Palette } from 'lucide-react';
 import coverUrl from '../assets/cover.png';
 import { readyComponents } from '../registry/componentRegistry.js';
+import { paths } from '../routes.js';
 import styles from './page.module.css';
 
 const STEPS = [
@@ -37,11 +38,11 @@ export default function HomePage() {
             and a live playground for shipping polished product experiences without the design drift.
           </p>
           <div className={styles.actions}>
-            <Link to="/docs" className={styles.primaryAction}>
+            <Link to={paths.docs} className={styles.primaryAction}>
               Get started
               <ArrowRight size={16} aria-hidden="true" />
             </Link>
-            <Link to="/playground/accordion" className={styles.secondaryAction}>
+            <Link to={paths.playground('accordion')} className={styles.secondaryAction}>
               Open the playground
             </Link>
           </div>
@@ -65,7 +66,7 @@ export default function HomePage() {
         </h2>
         <div className={styles.grid}>
           {readyComponents.map((component) => (
-            <Link key={component.id} to={`/docs/components/${component.id}`} className={styles.card}>
+            <Link key={component.id} to={paths.componentDocs(component.id)} className={styles.card}>
               <div className={styles.cardHead}>
                 <span className={styles.cardName}>{component.name}</span>
                 <span className={styles.cardCategory}>{component.categoryLabel}</span>

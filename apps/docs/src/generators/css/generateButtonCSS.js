@@ -1,17 +1,29 @@
 import { FONT_STACKS } from '../../config/typography.js';
 import { BUTTON_VARIANTS, BUTTON_SIZE_TOKENS } from '../../config/buttonDefaults.js';
 import { buttonVariantVars, themeRef } from '../shared/colors.js';
+import {
+  NQ,
+  NQ_STATE,
+  btnAlign,
+  btnFull,
+  btnSize,
+  btnVariant,
+} from '../shared/classNames.js';
 
 /* generateButtonCSS(config, theme) -> Button.css source string (CSS mode).
    The reusable Button.jsx carries structure/behaviour; every appearance value
    lives here. Variant colours inherit theme tokens so the file still adapts to
-   a host theme, while the configured variant carries any explicit overrides. */
+   a host theme, while the configured variant carries any explicit overrides.
+   Selectors come from generators/shared/classNames.js so the preview and the
+   exported file can never disagree on names. */
 
 const SHADOWS = {
   sm: '0 1px 2px rgba(20, 22, 26, 0.08)',
   md: '0 2px 6px rgba(20, 22, 26, 0.1), 0 12px 24px -12px rgba(20, 22, 26, 0.25)',
   lg: '0 8px 18px -8px rgba(20, 22, 26, 0.18), 0 26px 52px -22px rgba(20, 22, 26, 0.32)',
 };
+
+const sel = (name) => `.${name}`;
 
 export function generateButtonCSS(config, theme = {}) {
   const { layout, typography, icons, borders, animation } = config;
@@ -32,7 +44,7 @@ export function generateButtonCSS(config, theme = {}) {
   push('*/');
   push();
 
-  push('.btn {');
+  push(`${sel(NQ.btn)} {`);
   push(`  --btn-dur: ${duration};`);
   push(`  --btn-ease: ${animation.easing};`);
   push(`  --btn-gap: ${layout.gap}px;`);
@@ -62,21 +74,21 @@ export function generateButtonCSS(config, theme = {}) {
   push('    box-shadow var(--btn-dur) var(--btn-ease), transform var(--btn-dur) var(--btn-ease);');
   push('}');
   push();
-  push('.btn:hover:not(:disabled):not(.is-loading) {');
+  push(`${sel(NQ.btn)}:hover:not(:disabled):not(.${NQ_STATE.loading}) {`);
   push('  background: var(--btn-bg-hover);');
   push('}');
   push();
-  push('.btn:active:not(:disabled):not(.is-loading) {');
+  push(`${sel(NQ.btn)}:active:not(:disabled):not(.${NQ_STATE.loading}) {`);
   push('  transform: translateY(1px);');
   push('}');
   push();
-  push('.btn:focus-visible {');
+  push(`${sel(NQ.btn)}:focus-visible {`);
   push(`  outline: 2px solid ${themeRef('focus', theme)};`);
   push('  outline-offset: 2px;');
   push('}');
   push();
-  push('.btn:disabled,');
-  push('.btn.is-loading {');
+  push(`${sel(NQ.btn)}:disabled,`);
+  push(`${sel(NQ.btn)}.${NQ_STATE.loading} {`);
   push('  cursor: not-allowed;');
   push('  opacity: 0.6;');
   push('}');
@@ -84,7 +96,7 @@ export function generateButtonCSS(config, theme = {}) {
 
   /* sizes */
   for (const [size, token] of Object.entries(BUTTON_SIZE_TOKENS)) {
-    push(`.btn--${size} {`);
+    push(`${sel(btnSize(size))} {`);
     push(`  padding: ${token.paddingY}px ${token.paddingX}px;`);
     push(`  font-size: ${token.fontSize}px;`);
     push(`  min-height: ${token.height}px;`);
@@ -93,13 +105,13 @@ export function generateButtonCSS(config, theme = {}) {
   }
 
   /* width + alignment */
-  push('.btn--full {');
+  push(`${sel(btnFull())} {`);
   push('  width: 100%;');
   push('}');
   push();
   for (const align of ['start', 'center', 'end']) {
     const margin = align === 'center' ? 'margin-inline: auto;' : align === 'end' ? 'margin-inline: auto 0;' : 'margin-inline: 0;';
-    push(`.btn--align-${align} {`);
+    push(`${sel(btnAlign(align))} {`);
     push(`  ${margin}`);
     push('}');
     push();
@@ -108,7 +120,7 @@ export function generateButtonCSS(config, theme = {}) {
   /* variants */
   for (const variant of BUTTON_VARIANTS) {
     const vars = buttonVariantVars(config, variant, theme);
-    push(`.btn--${variant} {`);
+    push(`${sel(btnVariant(variant))} {`);
     push(`  --btn-bg: ${vars.background};`);
     push(`  --btn-fg: ${vars.text};`);
     push(`  --btn-border: ${vars.border};`);
@@ -118,7 +130,7 @@ export function generateButtonCSS(config, theme = {}) {
   }
 
   /* parts */
-  push('.btn__icon {');
+  push(`${sel(NQ.btnIcon)} {`);
   push('  display: inline-flex;');
   push('  align-items: center;');
   push('  justify-content: center;');
@@ -127,26 +139,26 @@ export function generateButtonCSS(config, theme = {}) {
   push('  height: var(--btn-icon);');
   push('}');
   push();
-  push('.btn__icon svg {');
+  push(`${sel(NQ.btnIcon)} svg {`);
   push('  width: 100%;');
   push('  height: 100%;');
   push('}');
   push();
-  push('.btn__label {');
+  push(`${sel(NQ.btnLabel)} {`);
   push('  display: inline-block;');
   push('}');
   push();
-  push('.btn__spinner {');
+  push(`${sel(NQ.btnSpinner)} {`);
   push('  flex: none;');
   push('  width: var(--btn-icon);');
   push('  height: var(--btn-icon);');
   push('  border-radius: 50%;');
   push('  border: 2px solid currentColor;');
   push('  border-top-color: transparent;');
-  push(`  animation: btn-spin 640ms linear infinite;`);
+  push('  animation: nq-btn-spin 640ms linear infinite;');
   push('}');
   push();
-  push('@keyframes btn-spin {');
+  push('@keyframes nq-btn-spin {');
   push('  to {');
   push('    transform: rotate(360deg);');
   push('  }');
@@ -154,13 +166,13 @@ export function generateButtonCSS(config, theme = {}) {
   push();
 
   push('@media (prefers-reduced-motion: reduce) {');
-  push('  .btn {');
+  push(`  ${sel(NQ.btn)} {`);
   push('    transition-duration: 0.01ms;');
   push('  }');
-  push('  .btn__spinner {');
+  push(`  ${sel(NQ.btnSpinner)} {`);
   push('    animation-duration: 1.6s;');
   push('  }');
   push('}');
 
-  return out.join('\n');
+  return ['@layer nasaq {', ...out, '}'].join('\n');
 }

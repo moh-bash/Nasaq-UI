@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { paths } from '../routes.js';
 import styles from './page.module.css';
 
 export default function NotFoundPage() {
@@ -8,10 +9,10 @@ export default function NotFoundPage() {
       <h1 className={styles.display}>Nothing on this press</h1>
       <p className={styles.lede}>The page you asked for is not registered in the studio.</p>
       <div className={styles.actions} style={{ justifyContent: 'center' }}>
-        <Link to="/" className={styles.primaryAction}>
+        <Link to={paths.home} className={styles.primaryAction}>
           Back home
         </Link>
-        <Link to="/docs/components" className={styles.secondaryAction}>
+        <Link to={paths.components} className={styles.secondaryAction}>
           Browse components
         </Link>
       </div>

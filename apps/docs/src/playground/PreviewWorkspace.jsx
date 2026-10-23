@@ -16,6 +16,7 @@ import PresetPicker from './PresetPicker.jsx';
 import ViewportSwitcher from './ViewportSwitcher.jsx';
 import ExportToolbar from './ExportToolbar.jsx';
 import controls from './controls.module.css';
+import { paths } from '../routes.js';
 import styles from './PreviewWorkspace.module.css';
 
 const BACKGROUNDS = [
@@ -77,7 +78,7 @@ export default function PreviewWorkspace({
             <p className={styles.description}>{component.description}</p>
           </div>
 
-          <Link to={`/docs/components/${component.id}`} className={controls.btn}>
+          <Link to={paths.componentDocs(component.id)} className={controls.btn}>
             Docs &amp; props
           </Link>
 

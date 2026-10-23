@@ -6,6 +6,7 @@ import ComponentPreview from '../components/ui/ComponentPreview.jsx';
 import PropTable from '../components/docs/PropTable.jsx';
 import CodeBlock from '../components/docs/CodeBlock.jsx';
 import { useTheme } from '../providers/ThemeProvider.jsx';
+import { paths } from '../routes.js';
 import styles from './page.module.css';
 
 export default function ComponentDocsPage() {
@@ -26,7 +27,7 @@ export default function ComponentDocsPage() {
         <h1 className={styles.display}>Not in the library</h1>
         <p className={styles.lede}>No component is registered under “{componentId}”.</p>
         <div className={styles.actions} style={{ justifyContent: 'center' }}>
-          <Link to="/docs/components" className={styles.primaryAction}>
+          <Link to={paths.components} className={styles.primaryAction}>
             Back to components
           </Link>
         </div>
@@ -37,7 +38,7 @@ export default function ComponentDocsPage() {
   if (!ready) {
     return (
       <div className={styles.page}>
-        <Link to="/docs/components" className={styles.back}>
+        <Link to={paths.components} className={styles.back}>
           <ArrowLeft size={14} aria-hidden="true" />
           Components
         </Link>
@@ -75,7 +76,7 @@ export default function ComponentDocsPage() {
           <h1 className={styles.docsTitle}>{component.name}</h1>
           <p className={styles.docsOverview}>{component.docs.overview}</p>
         </div>
-        <Link to={`/docs/components/${component.id}/playground`} className={styles.primaryAction}>
+        <Link to={paths.playground(component.id)} className={styles.primaryAction}>
           Open in playground
           <ArrowRight size={16} aria-hidden="true" />
         </Link>
@@ -113,7 +114,7 @@ export default function ComponentDocsPage() {
 
       <nav className={styles.pager}>
         {prev ? (
-          <Link to={`/docs/components/${prev.id}`} className={styles.pagerLink}>
+          <Link to={paths.componentDocs(prev.id)} className={styles.pagerLink}>
             <ArrowLeft size={14} aria-hidden="true" />
             <span>
               <em>Previous</em>
@@ -124,7 +125,7 @@ export default function ComponentDocsPage() {
           <span />
         )}
         {next ? (
-          <Link to={`/docs/components/${next.id}`} className={styles.pagerLink} data-next>
+          <Link to={paths.componentDocs(next.id)} className={styles.pagerLink} data-next>
             <span>
               <em>Next</em>
               {next.name}
