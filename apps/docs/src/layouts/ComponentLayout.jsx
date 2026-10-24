@@ -1,47 +1,29 @@
 import { useEffect } from 'react';
-import { NavLink, Outlet, useParams } from 'react-router-dom';
+import { Outlet, useParams } from 'react-router-dom';
 import { getComponent, getReadyComponent } from '../registry/componentRegistry.js';
-import { setLastComponent } from '../utils/shellStorage.js';
+import { useShellStore } from '../stores/shellStore.js';
 import styles from './ComponentLayout.module.css';
 
+/*
+  Shared wrapper for both component views. The Docs/Playground switch lives in
+  the sidebar; this layout only remembers the last component the user visited.
+*/
 export default function ComponentLayout() {
   const { componentId } = useParams();
   const component = getComponent(componentId);
   const ready = getReadyComponent(componentId);
+  const setLastComponent = useShellStore((state) => state.setLastComponent);
 
   useEffect(() => {
-    if (component && ready) {
-      setLastComponent(component.id);
-    }
-  }, [component, ready]);
+    if (component && ready) setLastComponent(component.id);
+  }, [component, ready, setLastComponent]);
 
   if (!component) {
     return <Outlet />;
   }
 
-  const showPlaygroundTab = !!ready;
-
   return (
     <div className={styles.container}>
-      {showPlaygroundTab ? (
-        <nav className={styles.tabBar} role="tablist" aria-label="Component view">
-          <NavLink
-            to={`/docs/components/${componentId}`}
-            end
-            className={({ isActive }) => (isActive ? styles.tabActive : styles.tab)}
-            role="tab"
-          >
-            Docs
-          </NavLink>
-          <NavLink
-            to={`/docs/components/${componentId}/playground`}
-            className={({ isActive }) => (isActive ? styles.tabActive : styles.tab)}
-            role="tab"
-          >
-            Playground
-          </NavLink>
-        </nav>
-      ) : null}
       <div className={styles.content}>
         <Outlet />
       </div>

@@ -1,85 +1,81 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Outlet, useMatch } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
+import { Outlet } from 'react-router-dom';
 import SiteHeader from '../app/SiteHeader.jsx';
+import SkipLink from '../components/SkipLink.jsx';
 import AppSidebar from './AppSidebar.jsx';
-import { ShellProvider } from './ShellContext.jsx';
-import { getSidebarState, setSidebarState } from '../utils/shellStorage.js';
-import { useMediaQuery } from '../hooks/useMediaQuery.js';
+import { useShell } from './useShell.js';
 import styles from './DocsShell.module.css';
 
+const SEARCH_SELECTOR = '[data-sidebar-search]';
+
+/*
+  The docs chrome. Shell state comes from the store; this component only owns
+  the drawer's focus lifecycle (move focus in on open, restore it on close).
+*/
 export default function DocsShell() {
-  const isNarrow = useMediaQuery('(max-width: 1080px)');
-  const stored = typeof window !== 'undefined' ? getSidebarState() : null;
-  const [collapsed, setCollapsed] = useState(stored === 'collapsed');
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  const isPlaygroundView = !!useMatch('/docs/components/:componentId/playground');
-
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [isPlaygroundView]); // eslint-disable-line react-hooks/set-state-in-effect
-
-  const toggleCollapsed = () => {
-    setCollapsed((prev) => {
-      const next = !prev;
-      setSidebarState(next ? 'collapsed' : 'expanded');
-      return next;
-    });
-  };
-
-  const openMobileDrawer = () => setMobileOpen(true);
-  const closeMobileDrawer = () => setMobileOpen(false);
-
-  const value = useMemo(
-    () => ({
-      collapsed,
-      toggleCollapsed,
-      mobileOpen,
-      openMobileDrawer,
-      closeMobileDrawer,
-      isNarrow,
-      view: isPlaygroundView ? 'playground' : 'docs',
-    }),
-    [collapsed, mobileOpen, isNarrow, isPlaygroundView],
-  );
+  const { collapsed, mobileOpen, closeMobileDrawer, isNarrow, view } = useShell();
+  const triggerRef = useRef(null);
+  const wasOpen = useRef(false);
 
   useEffect(() => {
     if (!isNarrow) return undefined;
+
+    if (mobileOpen) {
+      if (!wasOpen.current) {
+        wasOpen.current = true;
+        const active = document.activeElement;
+        triggerRef.current = active && active !== document.body ? active : null;
+      }
+      const id = requestAnimationFrame(() => document.querySelector(SEARCH_SELECTOR)?.focus());
+      return () => cancelAnimationFrame(id);
+    }
+
+    if (wasOpen.current) {
+      wasOpen.current = false;
+      const trigger = triggerRef.current;
+      triggerRef.current = null;
+      trigger?.focus?.();
+    }
+    return undefined;
+  }, [isNarrow, mobileOpen]);
+
+  useEffect(() => {
+    if (!isNarrow || !mobileOpen) return undefined;
     const onKeyDown = (event) => {
       if (event.key === 'Escape') {
-        setMobileOpen(false);
+        closeMobileDrawer();
       }
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [isNarrow]);
+  }, [closeMobileDrawer, isNarrow, mobileOpen]);
 
   return (
-    <ShellProvider value={value}>
-      <div className={styles.shell} data-view={isPlaygroundView ? 'playground' : 'docs'}>
-        <SiteHeader />
-        <div className={styles.body}>
-          <aside
-            className={styles.sidebar}
-            data-collapsed={collapsed ? 'true' : 'false'}
-            data-mobile={mobileOpen ? 'open' : 'closed'}
-            inert={isNarrow && !mobileOpen ? true : undefined}
-          >
-            <AppSidebar />
-          </aside>
-          <main className={styles.main}>
-            <Outlet />
-          </main>
-        </div>
-        {isNarrow && mobileOpen ? (
-          <button
-            type="button"
-            className={styles.backdrop}
-            aria-label="Close sidebar"
-            onClick={closeMobileDrawer}
-          />
-        ) : null}
+    <div className={styles.shell} data-view={view}>
+      <SkipLink />
+      <SiteHeader />
+      <div className={styles.body}>
+        <aside
+          className={styles.sidebar}
+          aria-label="Sidebar"
+          data-collapsed={collapsed ? 'true' : 'false'}
+          data-mobile={mobileOpen ? 'open' : 'closed'}
+          inert={isNarrow && !mobileOpen ? true : undefined}
+        >
+          <AppSidebar />
+        </aside>
+        <main className={styles.main} id="main-content">
+          <Outlet />
+        </main>
       </div>
-    </ShellProvider>
+      {isNarrow && mobileOpen ? (
+        <button
+          type="button"
+          className={styles.backdrop}
+          aria-label="Close sidebar"
+          onClick={closeMobileDrawer}
+        />
+      ) : null}
+    </div>
   );
 }

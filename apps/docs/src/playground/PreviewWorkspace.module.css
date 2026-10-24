@@ -3,7 +3,8 @@
   flex-direction: column;
   min-width: 0;
   min-height: 0;
-  min-height: 100%;
+  height: 100%;
+  overflow: hidden;
   background: var(--ui-panel);
 }
 
@@ -45,6 +46,20 @@
   text-overflow: ellipsis;
 }
 
+.viewDocs {
+  flex: none;
+  font-size: var(--text-12);
+  font-weight: 600;
+  color: var(--ui-ink-2);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.viewDocs:hover {
+  color: var(--ui-ink);
+  border-bottom-color: currentColor;
+}
+
 .status {
   flex: none;
   font-family: var(--font-mono);
@@ -80,52 +95,184 @@
   padding: 0 16px 10px;
 }
 
+.toolbarGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
 .spacer {
   flex: 1;
   min-width: 8px;
 }
 
-.groupLabel {
-  font-size: var(--text-11);
-  color: var(--ui-ink-3);
-  margin-right: 2px;
-}
-
-.bgGroup {
+.inspectorBtn {
   display: inline-flex;
   align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--ui-rule);
+  border-radius: var(--radius-md);
+  background: var(--ui-panel);
+  color: var(--ui-ink);
+  font-size: var(--text-12);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.inspectorBtn[aria-expanded='true'] {
+  border-color: var(--ui-rule-strong);
+  background: var(--ui-panel-sunken);
+}
+
+.inspectorBtn:hover {
+  border-color: var(--ui-rule-strong);
+}
+
+.notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 16px;
+  border-top: 1px solid var(--ui-rule);
+  background: var(--color-active);
+  color: var(--color-text);
+  font-size: var(--text-12);
+}
+
+.noticeAction {
+  height: 24px;
+  padding: 0 9px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font-size: var(--text-11);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.noticeDismiss {
+  margin-inline-start: auto;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.split {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.separator {
+  position: relative;
+  flex: none;
+  height: 7px;
+  background: var(--ui-panel);
+  border-top: 1px solid var(--ui-rule);
+  border-bottom: 1px solid var(--ui-rule);
+  cursor: ns-resize;
+}
+
+.separator::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 2px;
+  transform: translateX(-50%);
+  width: 34px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--ui-rule-strong);
+}
+
+.separator:hover::after,
+.separator:focus-visible::after,
+.separator[data-separator='active']::after {
+  background: var(--color-primary);
+}
+
+.compact {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.mobileTabs {
+  display: inline-flex;
   gap: 2px;
+  flex: none;
+  margin: 8px 12px;
   padding: 2px;
   border: 1px solid var(--ui-rule);
   border-radius: var(--radius-md);
   background: var(--ui-panel-sunken);
+  align-self: flex-start;
 }
 
-.bgBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
+.mobileTabs button {
+  min-width: 84px;
+  height: 28px;
   border: 0;
-  border-radius: 2px;
+  border-radius: 3px;
   background: none;
   color: var(--ui-ink-2);
+  font-size: var(--text-12);
+  font-weight: 600;
   cursor: pointer;
 }
 
-.bgBtn:hover {
-  color: var(--ui-ink);
-}
-
-.bgBtn[aria-pressed='true'] {
+.mobileTabs button[aria-selected='true'] {
   background: var(--ui-panel);
   color: var(--ui-ink);
   box-shadow: 0 1px 2px rgba(20, 22, 26, 0.1);
 }
 
+.compactBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
 @media (max-width: 720px) {
   .description {
     display: none;
+  }
+
+  .inspectorBtn span {
+    display: none;
+  }
+
+  .inspectorBtn {
+    width: 30px;
+    padding: 0;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status {
+    animation: none;
   }
 }

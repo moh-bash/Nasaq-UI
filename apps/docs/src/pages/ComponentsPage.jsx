@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { categories, countPlanned, countReady } from '../registry/componentRegistry.js';
+import { paths } from '../routes.js';
 import styles from './page.module.css';
 
 export default function ComponentsPage() {
@@ -46,7 +47,7 @@ export default function ComponentsPage() {
               return (
                 <Link
                   key={component.id}
-                  to={`/docs/components/${component.id}`}
+                  to={paths.componentDocs(component.id)}
                   className={styles.card}
                   data-status={ready ? undefined : 'planned'}
                 >

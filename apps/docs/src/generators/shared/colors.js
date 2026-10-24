@@ -11,7 +11,9 @@ import { VARIANT_TOKENS } from '../../config/buttonDefaults.js';
 
 export const THEME_TOKEN_DEFAULTS = {
   primary: '#1e3ae0',
+  'on-primary': '#ffffff',
   secondary: '#0e4f45',
+  'on-secondary': '#ffffff',
   accent: '#e8461e',
   background: '#edefec',
   surface: '#ffffff',
@@ -20,9 +22,10 @@ export const THEME_TOKEN_DEFAULTS = {
   border: '#d6d9d4',
   hover: '#f1f3ef',
   active: '#ecf0ff',
-  success: '#1b7f4c',
-  warning: '#a66b00',
+  success: '#177243',
+  warning: '#8a5900',
   danger: '#c42b1c',
+  'on-danger': '#ffffff',
   focus: '#1e3ae0',
 };
 

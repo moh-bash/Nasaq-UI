@@ -11,6 +11,14 @@ body,
   height: 100%;
 }
 
+:root {
+  color-scheme: light;
+}
+
+[data-theme-mode='dark'] {
+  color-scheme: dark;
+}
+
 html {
   background: var(--ui-paper);
 }

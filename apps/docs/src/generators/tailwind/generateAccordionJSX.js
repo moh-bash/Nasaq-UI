@@ -1,7 +1,6 @@
-import { FONT_STACKS } from '../../config/typography.js';
-import { colorRef } from '../css/generateAccordionCSS.js';
 import { accordionItemsLiteral } from '../shared/literals.js';
 import { quote } from '../shared/formatCode.js';
+import { accordionVariables } from '../shared/variables.js';
 
 /*
   generateAccordionTailwindJSX(config, theme) -> a self-contained Tailwind
@@ -9,7 +8,7 @@ import { quote } from '../shared/formatCode.js';
 
   The container exposes every config value as a CSS custom property in an
   inline style; the children reference those variables through static arbitrary
-  utilities (bg-[color:var(--acc-qbg)], text-[length:var(--acc-qsize)],
+  utilities (bg-[color:var(--nq-acc-question-bg)], text-[length:var(--nq-acc-question-size)],
   grid-rows-[0fr]/[1fr], …). Open-state styling is driven by `group-aria-expanded`
   so no class name is constructed by interpolating values at runtime.
 */
@@ -31,7 +30,7 @@ function buildIndicator(icons) {
 
   const open = (body) => [
     '                <span',
-    `                  className="inline-flex h-[var(--acc-icon)] w-[var(--acc-icon)] flex-none items-center justify-center text-[color:var(--acc-icon-color)] transition-transform${icons.position === 'start' ? ' order-first' : ''}${rotateClass}"`,
+    `                  className="inline-flex h-[var(--nq-acc-icon-size)] w-[var(--nq-acc-icon-size)] flex-none items-center justify-center text-[color:var(--nq-acc-icon-color)] transition-transform${icons.position === 'start' ? ' order-first' : ''}${rotateClass}"`,
     '                  aria-hidden="true"',
     '                >',
     body,
@@ -58,78 +57,51 @@ function buildIndicator(icons) {
 }
 
 export function generateAccordionTailwindJSX(config, theme = {}) {
-  const { content, layout, borders, typography, icons, animation, behavior } = config;
-  const c = (prop) => colorRef(config, prop, theme);
-  const font = FONT_STACKS[typography.fontFamily] || FONT_STACKS.system;
-  const duration = animation.enabled ? `${animation.duration}ms` : '0ms';
+  const { content, layout, icons, behavior } = config;
+  const variables = accordionVariables(config, theme);
 
   const rootStyle = [
-    `fontFamily: ${quote(font)}`,
-    `width: ${quote(`${layout.widthPercent}%`)}`,
-    `maxWidth: ${quote(`${layout.maxWidth}px`)}`,
-    `marginInline: ${quote(layout.align === 'center' ? 'auto' : layout.align === 'end' ? 'auto 0' : '0')}`,
-    `textAlign: ${quote(layout.textAlign)}`,
-    `color: ${quote(c('questionText'))}`,
-    `background: ${quote(c('background'))}`,
-    `border: ${quote(borders.enabled && borders.width > 0 ? `${borders.width}px ${borders.style} ${c('borderColor')}` : '0')}`,
-    `borderRadius: ${quote(`${borders.radius}px`)}`,
-    `overflow: 'hidden'`,
-    `'--acc-dur': ${quote(duration)}`,
-    `'--acc-ease': ${quote(animation.easing)}`,
-    `'--acc-icon': ${quote(`${icons.size}px`)}`,
-    `'--acc-container-bg': ${quote(c('background'))}`,
-    `'--acc-item-radius': ${quote(`${borders.itemRadius}px`)}`,
-    `'--acc-qradius': ${quote(`${borders.questionRadius}px`)}`,
-    `'--acc-item-gap': ${quote(`${layout.itemGap}px`)}`,
-    `'--acc-section-gap': ${quote(`${layout.sectionGap}px`)}`,
-    `'--acc-qpad': ${quote(`${layout.questionPaddingY}px ${layout.questionPaddingX}px`)}`,
-    `'--acc-answer-pad': ${quote(`${layout.contentGap}px ${layout.questionPaddingX}px ${layout.answerPadding}px`)}`,
-    `'--acc-heading-size': ${quote(`${typography.headingSize}px`)}`,
-    `'--acc-qsize': ${quote(`${typography.questionSize}px`)}`,
-    `'--acc-asize': ${quote(`${typography.answerSize}px`)}`,
-    `'--acc-weight': ${quote(String(typography.fontWeight))}`,
-    `'--acc-lh': ${quote(String(typography.lineHeight))}`,
-    `'--acc-ls': ${quote(`${typography.letterSpacing}em`)}`,
-    `'--acc-qfg': ${quote(c('questionText'))}`,
-    `'--acc-afg': ${quote(c('answerText'))}`,
-    `'--acc-heading': ${quote(c('headingText'))}`,
-    `'--acc-qbg': ${quote(c('questionBackground'))}`,
-    `'--acc-abg': ${quote(c('answerBackground'))}`,
-    `'--acc-hover': ${quote(c('hoverBackground'))}`,
-    `'--acc-open': ${quote(c('openBackground'))}`,
-    `'--acc-icon-color': ${quote(c('iconColor'))}`,
-    `'--acc-divider': ${quote(c('dividerColor'))}`,
-    `'--acc-focus': ${quote(c('focusColor'))}`,
+    `...${JSON.stringify(variables)}`,
+    "fontFamily: 'var(--nq-acc-font-family)'",
+    "width: 'var(--nq-acc-width)'",
+    "maxWidth: 'var(--nq-acc-max-width)'",
+    "marginInline: 'var(--nq-acc-margin-inline)'",
+    "textAlign: 'var(--nq-acc-text-align)'",
+    "color: 'var(--nq-acc-question-fg)'",
+    "background: 'var(--nq-acc-bg)'",
+    "border: 'var(--nq-acc-border-width) var(--nq-acc-border-style) var(--nq-acc-border-color)'",
+    "borderRadius: 'var(--nq-acc-radius)'",
+    "overflow: 'hidden'",
   ];
 
   const heading = [];
   if (content.title || (content.showDescription && content.description)) {
-    heading.push('      <header className="mb-[var(--acc-section-gap)]">');
+    heading.push('      <header className="mb-[var(--nq-acc-section-gap)]">');
     if (content.title) {
       heading.push(
-        `        <h3 className="m-0 leading-tight tracking-[var(--acc-ls)] text-[color:var(--acc-heading)] text-[length:var(--acc-heading-size)]">${content.title}</h3>`,
+        `        <h3 className="m-0 leading-tight tracking-[var(--nq-acc-letter-spacing)] text-[color:var(--nq-acc-heading-fg)] text-[length:var(--nq-acc-heading-size)]">${content.title}</h3>`,
       );
     }
     if (content.showDescription && content.description) {
       heading.push(
-        `        <p className="mt-2 leading-normal text-[color:var(--acc-afg)] text-[length:var(--acc-asize)]">${content.description}</p>`,
+        `        <p className="mt-2 leading-normal text-[color:var(--nq-acc-answer-fg)] text-[length:var(--nq-acc-answer-size)]">${content.description}</p>`,
       );
     }
     heading.push('      </header>');
   }
 
-  const listClasses = ['flex', 'flex-col', 'gap-[var(--acc-item-gap)]'];
+  const listClasses = ['flex', 'flex-col', 'gap-[var(--nq-acc-item-gap)]'];
   if (layout.dividers && layout.itemGap === 0) {
-    listClasses.push('divide-y', 'divide-[color:var(--acc-divider)]');
+    listClasses.push('divide-y', 'divide-[color:var(--nq-acc-divider-color)]');
   }
 
-  const hoverClass = behavior.hoverEffect ? ' hover:bg-[color:var(--acc-hover)]' : '';
+  const hoverClass = behavior.hoverEffect ? ' hover:bg-[color:var(--nq-acc-hover-bg)]' : '';
   const numbering = content.numbering && icons.style !== 'number';
 
   const rowBody = [];
   if (numbering) {
     rowBody.push(
-      '                <span className="flex-none tabular-nums text-[color:var(--acc-afg)]" aria-hidden="true">{String(index + 1).padStart(2, \'0\')}</span>',
+      '                <span className="flex-none tabular-nums text-[color:var(--nq-acc-answer-fg)]" aria-hidden="true">{String(index + 1).padStart(2, \'0\')}</span>',
     );
   }
   rowBody.push('                <span className="flex-1">{item.question}</span>');
@@ -163,12 +135,12 @@ export function generateAccordionTailwindJSX(config, theme = {}) {
     '          return (',
     '            <div',
     '              key={item.id}',
-    '              className="overflow-hidden rounded-[var(--acc-item-radius)] bg-[color:var(--acc-container-bg)]"',
+    '              className="overflow-hidden rounded-[var(--nq-acc-item-radius)] bg-[color:var(--nq-acc-bg)]"',
     '            >',
     '              <button',
     '                type="button"',
-    `                className={\`group flex w-full cursor-pointer items-center gap-3 border-0 text-left leading-[var(--acc-lh)] tracking-[var(--acc-ls)] text-[color:var(--acc-qfg)] text-[length:var(--acc-qsize)] transition-colors rounded-[var(--acc-qradius)] disabled:cursor-not-allowed disabled:opacity-55\${isOpen ? ' bg-[color:var(--acc-open)]' : ' bg-[color:var(--acc-qbg)]'}${hoverClass}\`}`,
-    "                style={{ padding: 'var(--acc-qpad)', fontWeight: 'var(--acc-weight)', transitionDuration: 'var(--acc-dur)', transitionTimingFunction: 'var(--acc-ease)' }}",
+    `                className={\`group flex w-full cursor-pointer items-center gap-3 border-0 text-left leading-[var(--nq-acc-line-height)] tracking-[var(--nq-acc-letter-spacing)] text-[color:var(--nq-acc-question-fg)] text-[length:var(--nq-acc-question-size)] transition-colors rounded-[var(--nq-acc-question-radius)] disabled:cursor-not-allowed disabled:opacity-55\${isOpen ? ' bg-[color:var(--nq-acc-open-bg)]' : ' bg-[color:var(--nq-acc-question-bg)]'}${hoverClass}\`}`,
+    "                style={{ padding: 'var(--nq-acc-question-padding-y) var(--nq-acc-question-padding-x)', fontWeight: 'var(--nq-acc-question-weight)', transitionDuration: 'var(--nq-acc-duration)', transitionTimingFunction: 'var(--nq-acc-easing)' }}",
     '                aria-expanded={isOpen}',
     '                disabled={item.disabled}',
     '                onClick={() => toggle(item.id)}',
@@ -178,10 +150,10 @@ export function generateAccordionTailwindJSX(config, theme = {}) {
     '              <div',
     '                role="region"',
     `                className={\`grid overflow-hidden transition-[grid-template-rows]\${isOpen ? ' grid-rows-[1fr]' : ' grid-rows-[0fr]'}\`}`,
-    "                style={{ transitionDuration: 'var(--acc-dur)', transitionTimingFunction: 'var(--acc-ease)' }}",
+    "                style={{ transitionDuration: 'var(--nq-acc-duration)', transitionTimingFunction: 'var(--nq-acc-easing)' }}",
     '              >',
-    '                <div className="min-h-0 overflow-hidden bg-[color:var(--acc-abg)]" style={{ padding: \'var(--acc-answer-pad)\' }}>',
-    '                  <div className="leading-[var(--acc-lh)] tracking-[var(--acc-ls)] text-[color:var(--acc-afg)] text-[length:var(--acc-asize)]">',
+    '                <div className="min-h-0 overflow-hidden bg-[color:var(--nq-acc-answer-bg)]" style={{ padding: \'var(--nq-acc-content-gap) var(--nq-acc-question-padding-x) var(--nq-acc-answer-padding)\' }}>',
+    '                  <div className="leading-[var(--nq-acc-line-height)] tracking-[var(--nq-acc-letter-spacing)] text-[color:var(--nq-acc-answer-fg)] text-[length:var(--nq-acc-answer-size)]">',
     '                    {item.answer}',
     '                  </div>',
     '                </div>',

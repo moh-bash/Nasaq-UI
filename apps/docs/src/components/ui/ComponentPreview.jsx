@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useTheme } from '../../providers/ThemeProvider.jsx';
+import { useTheme } from '../../hooks/useTheme.js';
 import LivePreview from './LivePreview.jsx';
 
 /* Renders a component at a fixed configuration with its generated stylesheet,

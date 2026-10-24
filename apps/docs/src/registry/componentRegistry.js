@@ -10,9 +10,10 @@
   marketing pages can show the roadmap.
 */
 
-import accordionSource from '../../../../packages/react/src/components/Accordion/Accordion.jsx?raw';
-import buttonSource from '../../../../packages/react/src/components/Button/Button.jsx?raw';
-import tabsSource from '../../../../packages/react/src/components/Tabs/Tabs.jsx?raw';
+import { COMPONENT_PROPS } from 'nasaq';
+import accordionSource from '../../../../packages/react/src/components/Accordion/Accordion.tsx?raw';
+import buttonSource from '../../../../packages/react/src/components/Button/Button.tsx?raw';
+import tabsSource from '../../../../packages/react/src/components/Tabs/Tabs.tsx?raw';
 
 import AccordionPreview from '../components/ui/Accordion/AccordionPreview.jsx';
 import ButtonPreview from '../components/ui/Button/ButtonPreview.jsx';
@@ -82,7 +83,7 @@ const accordion = {
         usage: generateAccordionJSX(config),
         css: generateAccordionCSS(config, theme),
         componentSource: accordionSource,
-        componentFileName: 'Accordion.jsx',
+        componentFileName: 'Accordion.tsx',
         usageFileName: ACC_USAGE_FILENAME,
         cssFileName: 'Accordion.css',
         themeCss: generateThemeCSS(theme),
@@ -104,18 +105,7 @@ const accordion = {
       'In Tailwind mode the code panel shows a self-contained component that uses static utilities and CSS variables instead of the semantic stylesheet.',
       'Inherited colours emit var(--color-token, fallback) so the exported CSS keeps adapting to a host theme even before one loads.',
     ],
-    props: [
-      { name: 'items', type: 'Item[]', default: '[]', description: 'Each item is { id, question, answer, disabled }.' },
-      { name: 'title', type: 'string', default: "''", description: 'Optional heading above the list.' },
-      { name: 'description', type: 'string', default: "''", description: 'Optional line under the title.' },
-      { name: 'numbered', type: 'boolean', default: 'false', description: 'Prefix each question with a two-digit index.' },
-      { name: 'icon', type: "'chevron' | 'plus' | 'arrow' | 'number' | 'none'", default: "'chevron'", description: 'Row indicator.' },
-      { name: 'iconPosition', type: "'start' | 'end'", default: "'end'", description: 'Indicator side.' },
-      { name: 'allowMultiple', type: 'boolean', default: 'false', description: 'Keep several answers open.' },
-      { name: 'allowCollapse', type: 'boolean', default: 'true', description: 'Allow closing the last open answer.' },
-      { name: 'defaultOpenId', type: 'string', default: "''", description: 'Item id to open on mount.' },
-      { name: 'emptyState', type: 'ReactNode', default: 'null', description: 'Optional content shown when items is empty.' },
-    ],
+    props: COMPONENT_PROPS.accordion,
   },
 };
 
@@ -142,7 +132,7 @@ const button = {
         usage: generateButtonJSX(config),
         css: generateButtonCSS(config, theme),
         componentSource: buttonSource,
-        componentFileName: 'Button.jsx',
+        componentFileName: 'Button.tsx',
         usageFileName: BTN_USAGE_FILENAME,
         cssFileName: 'Button.css',
         themeCss: generateThemeCSS(theme),
@@ -164,16 +154,7 @@ const button = {
       'The Tailwind export is a self-contained component: static utility classes plus inline CSS variables, no runtime class-name interpolation.',
       'Icons come from one shared geometry table, so the preview and both generators always agree.',
     ],
-    props: [
-      { name: 'variant', type: "'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'", default: "'primary'", description: 'Colour role.' },
-      { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Padding, text and height bundle.' },
-      { name: 'fullWidth', type: 'boolean', default: 'false', description: 'Stretch to the container width.' },
-      { name: 'align', type: "'start' | 'center' | 'end'", default: "'start'", description: 'Horizontal placement when not full width.' },
-      { name: 'loading', type: 'boolean', default: 'false', description: 'Show a spinner and disable the button.' },
-      { name: 'disabled', type: 'boolean', default: 'false', description: 'Disable interaction.' },
-      { name: 'leadingIcon', type: 'ReactNode', default: 'null', description: 'Icon before the label.' },
-      { name: 'trailingIcon', type: 'ReactNode', default: 'null', description: 'Icon after the label.' },
-    ],
+    props: COMPONENT_PROPS.button,
   },
 };
 
@@ -200,7 +181,7 @@ const tabs = {
         usage: generateTabsJSX(config),
         css: generateTabsCSS(config, theme),
         componentSource: tabsSource,
-        componentFileName: 'Tabs.jsx',
+        componentFileName: 'Tabs.tsx',
         usageFileName: TABS_USAGE_FILENAME,
         cssFileName: 'Tabs.css',
         themeCss: generateThemeCSS(theme),
@@ -222,13 +203,7 @@ const tabs = {
       'The preview and generated output share the same tab data, active state, and semantic roles.',
       'Choose underline, pill, or boxed styling without changing the component API.',
     ],
-    props: [
-      { name: 'items', type: 'Tab[]', default: '[]', description: 'Each item is { id, label, content, disabled }.' },
-      { name: 'defaultActiveId', type: 'string', default: "'overview'", description: 'Tab selected on first render.' },
-      { name: 'variant', type: "'underline' | 'pill' | 'boxed'", default: "'underline'", description: 'Visual treatment.' },
-      { name: 'align', type: "'start' | 'center' | 'end' | 'stretch'", default: "'start'", description: 'Tab row alignment.' },
-      { name: 'emptyState', type: 'ReactNode', default: 'null', description: 'Optional content shown when items is empty.' },
-    ],
+    props: COMPONENT_PROPS.tabs,
   },
 };
 

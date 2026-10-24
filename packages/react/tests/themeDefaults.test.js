@@ -4,7 +4,7 @@ import {
   themeDefaults,
   defaultTheme,
   resolveTheme,
-} from '../src/index.js';
+} from '../src/index';
 
 describe('theme model', () => {
   it('defines a default for every declared token', () => {
@@ -15,7 +15,7 @@ describe('theme model', () => {
   });
 
   it('creates a light theme with no overrides', () => {
-    expect(defaultTheme()).toEqual({ version: 2, mode: 'light', overrides: {} });
+    expect(defaultTheme()).toEqual({ version: 3, mode: 'light', overrides: {} });
   });
 
   it('resolves to the light palette by default', () => {

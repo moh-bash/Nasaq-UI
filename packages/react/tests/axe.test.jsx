@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/react';
 import { axe } from 'vitest-axe';
-import { Button, Accordion, Tabs } from '../src/index.js';
+import { Button, Accordion, Tabs } from '../src/index';
 
 expect.extend({
   toHaveNoViolations(results) {

@@ -10,6 +10,41 @@
       content="Nasaq UI — a premium React component library and live playground for elegant interfaces."
     />
     <title>Nasaq UI</title>
+    <script>
+      /* Paint the persisted palette before the bundle loads (no flash of the
+         wrong theme). Mirrors apps/docs/src/stores/themeStore.js. */
+      (function () {
+        try {
+          var mode = 'system';
+          var raw = localStorage.getItem('nq.theme.v1');
+          if (raw) {
+            var saved = JSON.parse(raw);
+            if (saved && saved.state && saved.state.mode) mode = saved.state.mode;
+          } else {
+            var legacy = localStorage.getItem('cp.theme.v1');
+            if (legacy) {
+              var old = JSON.parse(legacy);
+              mode = old && old.mode === 'dark' ? 'dark' : 'light';
+            }
+          }
+          var resolved =
+            mode === 'system'
+              ? window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light'
+              : mode === 'dark'
+                ? 'dark'
+                : 'light';
+          var root = document.documentElement;
+          root.dataset.themePreference = mode;
+          root.dataset.themeMode = resolved;
+          root.dataset.theme = resolved;
+          root.style.colorScheme = resolved;
+        } catch (error) {
+          /* storage or JSON blocked — the React store applies defaults */
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

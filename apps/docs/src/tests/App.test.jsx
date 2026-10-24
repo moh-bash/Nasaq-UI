@@ -1,13 +1,15 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../app/App.jsx';
+import { useShellStore } from '../stores/shellStore.js';
+import { readJSON } from '../stores/safeStorage.js';
+
+function sidebar() {
+  return screen.getByRole('navigation', { name: 'Documentation' });
+}
 
 describe('App shell', () => {
-  beforeEach(() => {
-    window.localStorage.clear();
-  });
-
   it('renders the landing page and points to the docs start page', () => {
     window.history.pushState({}, '', '/');
     render(<App />);
@@ -37,8 +39,8 @@ describe('App shell', () => {
     window.history.pushState({}, '', '/components/accordion');
     render(<App />);
     expect(await screen.findByRole('heading', { level: 1, name: 'Accordion' })).toBeInTheDocument();
-    expect(screen.getByText('Props')).toBeInTheDocument();
-    expect(screen.getByText('Usage')).toBeInTheDocument();
+    expect(screen.getAllByText('Props').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Usage').length).toBeGreaterThan(0);
   });
 
   it('redirects legacy /theme to the theming docs', async () => {
@@ -50,18 +52,19 @@ describe('App shell', () => {
     expect(screen.getByText('Live editor')).toBeInTheDocument();
   });
 
-  it('redirects legacy /playground to first ready component playground', async () => {
+  it('redirects legacy /playground to the first ready component playground', async () => {
     window.history.pushState({}, '', '/playground');
     render(<App />);
-    expect(await screen.findByRole('tab', { name: 'Docs' })).toBeInTheDocument();
-    expect(await screen.findByRole('tab', { name: 'Playground' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Accordion' }),
+    ).toBeInTheDocument();
     expect(window.location.pathname).toBe('/docs/components/accordion/playground');
   });
 
   it('redirects legacy /playground/button to component playground', async () => {
     window.history.pushState({}, '', '/playground/button');
     render(<App />);
-    expect(await screen.findByRole('tab', { name: 'Playground' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { level: 1, name: 'Button' })).toBeInTheDocument();
     expect(window.location.pathname).toBe('/docs/components/button/playground');
   });
 
@@ -72,44 +75,112 @@ describe('App shell', () => {
     expect(window.location.pathname).toBe('/docs/components/tabs');
   });
 
-  it('keeps sidebar mounted and search text across Docs/Playground switch', async () => {
+  it('has exactly one navigation landmark and no Docs/Playground switch in the header', async () => {
+    window.history.pushState({}, '', '/docs/components/accordion');
+    render(<App />);
+    await screen.findByRole('heading', { level: 1, name: 'Accordion' });
+
+    const header = screen.getByRole('banner');
+    expect(within(header).queryByRole('link', { name: 'Playground' })).not.toBeInTheDocument();
+    expect(within(header).queryByRole('link', { name: 'Docs' })).not.toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'Documentation' })).toBeInTheDocument();
+    expect(screen.queryByRole('tab', { name: 'Playground' })).not.toBeInTheDocument();
+  });
+
+  it('expands a ready component into Docs and Playground links', async () => {
+    const user = userEvent.setup();
+    window.history.pushState({}, '', '/docs');
+    render(<App />);
+    await screen.findByRole('heading', { level: 1, name: 'Build with Nasaq UI' });
+
+    const nav = sidebar();
+    const buttonNode = within(nav).getByRole('button', { name: 'Button' });
+    await user.click(buttonNode);
+
+    expect(window.location.pathname).toBe('/docs/components/button');
+    const docsChild = nav.querySelector('a[href="/docs/components/button"]');
+    const playgroundChild = nav.querySelector('a[href="/docs/components/button/playground"]');
+    expect(docsChild).toHaveAttribute('aria-current', 'page');
+    expect(playgroundChild).toBeInTheDocument();
+  });
+
+  it('switches views from the sidebar without remounting it', async () => {
     const user = userEvent.setup();
     window.history.pushState({}, '', '/docs/components/accordion');
     render(<App />);
     const search = await screen.findByLabelText('Search components');
-    await user.type(search, 'button');
-    expect(search).toHaveValue('button');
-    const playgroundTab = await screen.findByRole('tab', { name: 'Playground' });
-    await user.click(playgroundTab);
-    expect(await screen.findByRole('tab', { name: 'Playground' })).toBeInTheDocument();
-    const searchAfter = screen.getByLabelText('Search components');
-    expect(searchAfter).toHaveValue('button');
+    await user.type(search, 'accordion');
+    expect(search).toHaveValue('accordion');
+
+    const nav = sidebar();
+    nav.scrollTop = 140;
+    const playgroundChild = nav.querySelector('a[href="/docs/components/accordion/playground"]');
+    expect(playgroundChild).toBeInTheDocument();
+    await user.click(playgroundChild);
+
     expect(window.location.pathname).toBe('/docs/components/accordion/playground');
+    expect(sidebar()).toBe(nav);
+    expect(sidebar()).toHaveProperty('scrollTop', 140);
+    expect(screen.getByLabelText('Search components')).toHaveValue('accordion');
   });
 
-  it('clicking component in Playground view stays in Playground view', async () => {
+  it('keeps the component view when moving between components', async () => {
     const user = userEvent.setup();
     window.history.pushState({}, '', '/docs/components/accordion/playground');
     render(<App />);
-    const buttonLink = await screen.findByRole('link', { name: /Button/i });
-    await user.click(buttonLink);
-    expect(await screen.findByRole('tab', { name: 'Playground' })).toBeInTheDocument();
+
+    const buttonNode = within(sidebar()).getByRole('button', { name: 'Button' });
+    await user.click(buttonNode);
     expect(window.location.pathname).toBe('/docs/components/button/playground');
   });
 
-  it('header Playground link follows nq.shell.lastComponent', async () => {
-    window.localStorage.setItem('nq.shell.lastComponent', 'tabs');
-    window.history.pushState({}, '', '/docs/components/tabs');
+  it('lands on the last used view for a component from another section', async () => {
+    const user = userEvent.setup();
+    useShellStore.getState().setLastView('button', 'playground');
+    window.history.pushState({}, '', '/docs/theming');
     render(<App />);
-    const playgroundLink = await screen.findByRole('link', { name: 'Playground' });
-    expect(playgroundLink).toHaveAttribute('href', '/docs/components/tabs/playground');
+
+    const buttonNode = within(sidebar()).getByRole('button', { name: 'Button' });
+    await user.click(buttonNode);
+    expect(window.location.pathname).toBe('/docs/components/button/playground');
   });
 
-  it('sidebar collapse state persists via localStorage', async () => {
+  it('collapses to an icon rail that can always be expanded again', async () => {
+    const user = userEvent.setup();
     window.history.pushState({}, '', '/docs/components/accordion');
     render(<App />);
-    const collapseBtn = await screen.findByRole('button', { name: /Collapse sidebar/i });
-    await userEvent.click(collapseBtn);
-    expect(window.localStorage.getItem('nq.shell.sidebar')).toBe('collapsed');
+    const collapseBtn = await screen.findByRole('button', { name: /collapse sidebar/i });
+    await user.click(collapseBtn);
+
+    expect(useShellStore.getState().sidebarCollapsed).toBe(true);
+    expect(readJSON('nq.shell.v1').state.sidebarCollapsed).toBe(true);
+    const expandBtn = await screen.findByRole('button', { name: /expand sidebar/i });
+    await user.click(expandBtn);
+    expect(useShellStore.getState().sidebarCollapsed).toBe(false);
+    expect(readJSON('nq.shell.v1').state.sidebarCollapsed).toBe(false);
+  });
+
+  it('filters the sidebar and keeps the matching component expanded', async () => {
+    const user = userEvent.setup();
+    window.history.pushState({}, '', '/docs');
+    render(<App />);
+    const search = await screen.findByLabelText('Search components');
+    await user.type(search, 'tabs');
+
+    const nav = sidebar();
+    expect(within(nav).queryByRole('button', { name: /accordion/i })).not.toBeInTheDocument();
+    const tabsNode = within(nav).getByRole('button', { name: /tabs/i });
+    expect(tabsNode).toHaveAttribute('aria-expanded', 'true');
+    expect(nav.querySelector('mark')).toHaveTextContent(/tabs/i);
+  });
+
+  it('shows planned components as disabled, non-focusable rows', async () => {
+    window.history.pushState({}, '', '/docs');
+    render(<App />);
+    const nav = sidebar();
+    const planned = within(nav).getByText('Stack').closest('[aria-disabled="true"]');
+    expect(planned).toBeInTheDocument();
+    expect(planned).not.toHaveAttribute('tabindex');
+    expect(within(planned).getByText('Soon')).toBeInTheDocument();
   });
 });

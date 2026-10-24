@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Check, Copy, RotateCcw } from 'lucide-react';
 import { THEME_TOKENS } from 'nasaq';
 import { generateThemeCSS, generateTailwindThemeCSS } from '../generators/index.js';
-import { useStylingMode } from '../providers/StylingModeProvider.jsx';
+import { useStylingMode } from '../hooks/useStylingMode.js';
 import { useClipboard } from '../hooks/useClipboard.js';
 import controls from './controls.module.css';
 import styles from './ThemeEditor.module.css';
@@ -79,14 +79,14 @@ export default function ThemeEditor({ theme, resolvedTheme, onMode, onToken, onR
       <div className={styles.mode}>
         <span className={styles.modeLabel}>Mode</span>
         <div className={controls.segmented} role="group" aria-label="Theme mode">
-          {['light', 'dark'].map((mode) => (
+          {['light', 'dark', 'system'].map((mode) => (
             <button
               key={mode}
               type="button"
               aria-pressed={theme.mode === mode}
               onClick={() => onMode(mode)}
             >
-              {mode === 'light' ? 'Light' : 'Dark'}
+              {mode === 'light' ? 'Light' : mode === 'dark' ? 'Dark' : 'System'}
             </button>
           ))}
         </div>

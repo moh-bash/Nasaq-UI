@@ -1,9 +1,16 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import CodeBlock from '../components/docs/CodeBlock.jsx';
+import { usePlaygroundStore } from '../stores/playgroundStore.js';
+import { paths } from '../routes.js';
 import styles from './page.module.css';
 
-const INSTALL_CODE = 'npm install nasaq';
+const PACKAGE_MANAGERS = [
+  { id: 'npm', label: 'npm', command: 'npm install nasaq' },
+  { id: 'pnpm', label: 'pnpm', command: 'pnpm add nasaq' },
+  { id: 'yarn', label: 'yarn', command: 'yarn add nasaq' },
+  { id: 'bun', label: 'bun', command: 'bun add nasaq' },
+];
 
 const ENTRY_CODE = `import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -39,6 +46,11 @@ const REQUIREMENTS = [
 ];
 
 export default function InstallationPage() {
+  const packageManager = usePlaygroundStore((state) => state.packageManager);
+  const setPackageManager = usePlaygroundStore((state) => state.setPackageManager);
+  const activeManager =
+    PACKAGE_MANAGERS.find((entry) => entry.id === packageManager) || PACKAGE_MANAGERS[0];
+
   return (
     <div className={styles.page}>
       <Link to="/docs" className={styles.back}>
@@ -73,10 +85,27 @@ export default function InstallationPage() {
 
       <section className={styles.panel}>
         <h2 className={styles.panelTitle}>Install</h2>
-        <CodeBlock code={INSTALL_CODE} language="bash" filename="terminal" />
+        <div className={styles.pmTabs} role="tablist" aria-label="Package manager">
+          {PACKAGE_MANAGERS.map((manager) => (
+            <button
+              key={manager.id}
+              type="button"
+              role="tab"
+              aria-selected={activeManager.id === manager.id}
+              onClick={() => setPackageManager(manager.id)}
+            >
+              {manager.label}
+            </button>
+          ))}
+        </div>
+        <CodeBlock
+          code={activeManager.command}
+          language="bash"
+          filename={`${activeManager.label} — terminal`}
+        />
         <p className={styles.sectionNote} style={{ marginTop: 12 }}>
           If you are not already in a React project, add <code>react</code> and{' '}
-          <code>react-dom</code> alongside.
+          <code>react-dom</code> alongside. Your package manager choice is remembered on this device.
         </p>
       </section>
 
@@ -120,7 +149,7 @@ export default function InstallationPage() {
         <CodeBlock code={THEME_CODE} language="css" filename="app.css" />
         <p className={styles.sectionNote} style={{ marginTop: 12 }}>
           Every component reads its colours from the theme tokens. Override just the variables you
-          need, or see <Link to="/docs/theming">Theming</Link> for the full set and a live editor.
+          need, or see <Link to={paths.theming}>Theming</Link> for the full set and a live editor.
         </p>
       </section>
     </div>

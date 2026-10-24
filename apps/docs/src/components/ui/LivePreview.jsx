@@ -1,20 +1,26 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import libraryCss from '../../../../../packages/react/src/styles/index.css?raw';
 
 /*
   LivePreview — renders a component inside a shadow root.
 
-  The generated component CSS targets semantic classes (.acc, .btn). Injecting
-  that stylesheet into the document would leak into the studio chrome, so it is
-  scoped to a shadow root instead: the preview is byte-for-byte the exported CSS,
-  isolated from the host page. Theme custom properties (--color-*) inherit across
-  the shadow boundary, so the preview still follows the live theme.
+  Generated component CSS imports the structural library stylesheet and only
+  overrides --nq-* variables. The shadow root cannot fetch that import, so the
+  same library source is injected first and the import line is stripped from the
+  generated file. This keeps the preview byte-for-byte equivalent to the export
+  while isolating it from the studio chrome.
 */
 
 const BASE = `
 :host { display: block; }
 *, *::before, *::after { box-sizing: border-box; }
 `;
+
+const withoutImport = (css) =>
+  typeof css === 'string'
+    ? css.replace(/@import\s+(?:url\()?['"]?nasaq\/styles\.css['"]?\)?;?/g, '')
+    : '';
 
 export default function LivePreview({ css, className, style, children, background }) {
   const hostRef = useRef(null);
@@ -28,12 +34,13 @@ export default function LivePreview({ css, className, style, children, backgroun
   }, []);
 
   return (
-    <div ref={hostRef} className={className} data-preview-bg={background} style={style}>
+    <div ref={hostRef} className={className} data-preview-bg={background} data-live-preview="" style={style}>
       {root
         ? createPortal(
             <>
               <style>{BASE}</style>
-              <style>{css}</style>
+              <style>{libraryCss}</style>
+              <style>{withoutImport(css)}</style>
               {children}
             </>,
             root,

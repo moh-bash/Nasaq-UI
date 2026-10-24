@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { THEME_TOKENS, THEME_VERSION, themeDefaults } from 'nasaq';
+import { THEME_TOKENS, THEME_VERSION, COMPONENT_VARIABLES, themeDefaults } from 'nasaq';
 import { readyComponents } from '../registry/componentRegistry.js';
-import { useTheme } from '../providers/ThemeProvider.jsx';
+import { useTheme } from '../hooks/useTheme.js';
 import ThemeEditor from '../playground/ThemeEditor.jsx';
 import ComponentPreview from '../components/ui/ComponentPreview.jsx';
 import CodeBlock from '../components/docs/CodeBlock.jsx';
+import { paths } from '../routes.js';
 import styles from './page.module.css';
 
 export default function ThemingPage() {
@@ -75,6 +76,46 @@ export default function ThemingPage() {
         </div>
       </div>
 
+      <div className={styles.panel}>
+        <h2 className={styles.panelTitle}>Component variables</h2>
+        <p className={styles.sectionNote}>
+          Every Playground control writes documented <code>--nq-*</code> variables (the size
+          selector writes its four size values together). Generated CSS is a short override block,
+          so you can also set these variables yourself.
+        </p>
+        {Object.entries(COMPONENT_VARIABLES).map(([component, variables]) => (
+          <section key={component} style={{ marginTop: 24 }}>
+            <h3 className={styles.cardCategory} style={{ marginBottom: 8 }}>
+              {component[0].toUpperCase() + component.slice(1)}
+            </h3>
+            <div className={styles.wrap}>
+              <table className={styles.tokenTable}>
+                <thead>
+                  <tr>
+                    <th scope="col">Control</th>
+                    <th scope="col">Variable</th>
+                    <th scope="col">Default</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {variables.map((entry) => (
+                    <tr key={entry.variable}>
+                      <td>{entry.control}</td>
+                      <td>
+                        <code>{entry.variable}</code>
+                      </td>
+                      <td>
+                        <code>{entry.defaultValue}</code>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        ))}
+      </div>
+
       <div className={styles.twoCol} style={{ marginTop: 28 }}>
         <div className={styles.panel} style={{ marginTop: 0 }}>
           <h2 className={styles.panelTitle}>Live editor</h2>
@@ -105,7 +146,7 @@ export default function ThemingPage() {
             ))}
           </div>
           <p className={styles.sectionNote} style={{ marginTop: 16 }}>
-            Adjust a token, then <Link to="/playground/accordion">open a component</Link> to fine-tune
+            Adjust a token, then <Link to={paths.playground('accordion')}>open a component</Link> to fine-tune
             a single control or export its stylesheet.
           </p>
         </div>

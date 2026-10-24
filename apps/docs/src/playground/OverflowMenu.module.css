@@ -1,0 +1,75 @@
+.wrap {
+  position: relative;
+  flex: none;
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--ui-rule);
+  border-radius: var(--radius-md);
+  background: var(--ui-panel);
+  color: var(--ui-ink-2);
+  cursor: pointer;
+}
+
+.trigger:hover,
+.trigger[aria-expanded='true'] {
+  color: var(--ui-ink);
+  border-color: var(--ui-rule-strong);
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 60;
+  min-width: 210px;
+  padding: 4px;
+  border: 1px solid var(--ui-rule);
+  border-radius: 10px;
+  background: var(--ui-panel);
+  box-shadow: var(--shadow-pop);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.menu :global(button) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 32px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--ui-ink);
+  font-size: var(--text-12);
+  text-align: left;
+  cursor: pointer;
+}
+
+.menu :global(button:hover),
+.menu :global(button:focus-visible) {
+  background: var(--ui-panel-sunken);
+}
+
+.menu :global(button[aria-pressed='true']) {
+  font-weight: 600;
+}
+
+.menu :global(button span.visually-hidden) {
+  position: static;
+  width: auto;
+  height: auto;
+  clip: auto;
+  overflow: visible;
+  white-space: normal;
+  margin: 0;
+}

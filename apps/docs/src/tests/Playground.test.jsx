@@ -1,32 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { ThemeProvider } from '../providers/ThemeProvider.jsx';
-import { StylingModeProvider } from '../providers/StylingModeProvider.jsx';
 import { getReadyComponent } from '../registry/componentRegistry.js';
 import Playground from '../playground/Playground.jsx';
-import { ShellProvider } from '../layouts/ShellContext.jsx';
 
 function renderStudio(componentId) {
   const component = getReadyComponent(componentId);
-  const shellValue = {
-    collapsed: false,
-    toggleCollapsed: () => {},
-    mobileOpen: false,
-    openMobileDrawer: () => {},
-    closeMobileDrawer: () => {},
-    isNarrow: false,
-    view: 'playground',
-  };
   return render(
     <MemoryRouter>
-      <ThemeProvider>
-        <StylingModeProvider>
-          <ShellProvider value={shellValue}>
-            <Playground component={component} />
-          </ShellProvider>
-        </StylingModeProvider>
-      </ThemeProvider>
+      <Playground component={component} />
     </MemoryRouter>,
   );
 }

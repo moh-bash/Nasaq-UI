@@ -1,11 +1,16 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { getComponent, getReadyComponent, readyComponents } from '../registry/componentRegistry.js';
 import ComponentPreview from '../components/ui/ComponentPreview.jsx';
 import PropTable from '../components/docs/PropTable.jsx';
 import CodeBlock from '../components/docs/CodeBlock.jsx';
-import { useTheme } from '../providers/ThemeProvider.jsx';
+import PageToc from '../components/docs/PageToc.jsx';
+import SectionHeading from '../components/docs/SectionHeading.jsx';
+import VariantGallery from '../components/docs/VariantGallery.jsx';
+import { useTheme } from '../hooks/useTheme.js';
+import { useShellStore } from '../stores/shellStore.js';
+import { paths } from '../routes.js';
 import styles from './page.module.css';
 
 export default function ComponentDocsPage() {
@@ -13,6 +18,11 @@ export default function ComponentDocsPage() {
   const component = getComponent(componentId);
   const ready = getReadyComponent(componentId);
   const { resolved } = useTheme();
+  const setLastView = useShellStore((state) => state.setLastView);
+
+  useEffect(() => {
+    if (ready) setLastView(ready.id, 'docs');
+  }, [ready, setLastView]);
 
   const usage = useMemo(() => {
     if (!ready) return '';
@@ -26,7 +36,7 @@ export default function ComponentDocsPage() {
         <h1 className={styles.display}>Not in the library</h1>
         <p className={styles.lede}>No component is registered under “{componentId}”.</p>
         <div className={styles.actions} style={{ justifyContent: 'center' }}>
-          <Link to="/docs/components" className={styles.primaryAction}>
+          <Link to={paths.components} className={styles.primaryAction}>
             Back to components
           </Link>
         </div>
@@ -37,7 +47,7 @@ export default function ComponentDocsPage() {
   if (!ready) {
     return (
       <div className={styles.page}>
-        <Link to="/docs/components" className={styles.back}>
+        <Link to={paths.components} className={styles.back}>
           <ArrowLeft size={14} aria-hidden="true" />
           Components
         </Link>
@@ -61,6 +71,24 @@ export default function ComponentDocsPage() {
   const index = readyComponents.findIndex((entry) => entry.id === component.id);
   const prev = readyComponents[index - 1] || null;
   const next = readyComponents[index + 1] || null;
+  const hasVariants = component.sections.some((section) =>
+    section.fields.some(
+      (field) =>
+        field.type === 'select' &&
+        !field.path.includes('.') &&
+        ['variant', 'size', 'tone', 'style'].includes(field.path) &&
+        field.options?.length > 1,
+    ),
+  );
+
+  const toc = [
+    { id: 'overview', label: 'Overview' },
+    { id: 'preview', label: 'Preview' },
+    ...(hasVariants ? [{ id: 'variants', label: 'Variants' }] : []),
+    { id: 'props', label: 'Props' },
+    { id: 'usage', label: 'Usage' },
+    { id: 'notes', label: 'Notes' },
+  ];
 
   return (
     <div className={styles.page}>
@@ -69,72 +97,95 @@ export default function ComponentDocsPage() {
         Components
       </Link>
 
-      <section className={styles.docsHead}>
-        <div>
-          <span className={styles.eyebrow}>{component.categoryLabel}</span>
-          <h1 className={styles.docsTitle}>{component.name}</h1>
-          <p className={styles.docsOverview}>{component.docs.overview}</p>
-        </div>
-        <Link to={`/docs/components/${component.id}/playground`} className={styles.primaryAction}>
-          Open in playground
-          <ArrowRight size={16} aria-hidden="true" />
-        </Link>
-      </section>
+      <div className={styles.docsLayout}>
+        <article>
+          <section className={styles.docsHead} id="overview">
+            <div>
+              <span className={styles.eyebrow}>{component.categoryLabel}</span>
+              <h1 className={styles.docsTitle}>{component.name}</h1>
+              <p className={styles.docsOverview}>{component.docs.overview}</p>
+            </div>
+            <Link to={paths.playground(component.id)} className={styles.primaryAction}>
+              Open in playground
+              <ArrowRight size={16} aria-hidden="true" />
+            </Link>
+          </section>
 
-      <div className={styles.panel}>
-        <h2 className={styles.panelTitle}>Preview</h2>
-        <ComponentPreview
-          component={component}
-          config={component.defaultConfig}
-          className={styles.previewMount}
-        />
+          <div className={styles.panel}>
+            <SectionHeading id="preview" className={styles.panelTitle}>
+              Preview
+            </SectionHeading>
+            <ComponentPreview
+              component={component}
+              config={component.defaultConfig}
+              className={styles.previewMount}
+            />
+          </div>
+
+          {hasVariants ? (
+            <div className={styles.panel} style={{ marginTop: 28 }}>
+              <SectionHeading id="variants" className={styles.panelTitle}>
+                Variants
+              </SectionHeading>
+              <VariantGallery component={component} />
+            </div>
+          ) : null}
+
+          <div className={styles.twoCol} style={{ marginTop: 28 }}>
+            <div className={styles.panel} style={{ marginTop: 0 }}>
+              <SectionHeading id="props" className={styles.panelTitle}>
+                Props
+              </SectionHeading>
+              <PropTable props={component.docs.props} />
+            </div>
+
+            <div className={styles.panel} style={{ marginTop: 0 }}>
+              <SectionHeading id="notes" className={styles.panelTitle}>
+                Notes
+              </SectionHeading>
+              <ul className={styles.notes}>
+                {component.docs.notes.map((note) => (
+                  <li key={note}>{note}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className={styles.panel}>
+            <SectionHeading id="usage" className={styles.panelTitle}>
+              Usage
+            </SectionHeading>
+            <CodeBlock code={usage} language="jsx" filename="usage.jsx" showLineNumbers />
+          </div>
+
+          <nav className={styles.pager}>
+            {prev ? (
+              <Link to={paths.componentDocs(prev.id)} className={styles.pagerLink}>
+                <ArrowLeft size={14} aria-hidden="true" />
+                <span>
+                  <em>Previous</em>
+                  {prev.name}
+                </span>
+              </Link>
+            ) : (
+              <span />
+            )}
+            {next ? (
+              <Link to={paths.componentDocs(next.id)} className={styles.pagerLink} data-next>
+                <span>
+                  <em>Next</em>
+                  {next.name}
+                </span>
+                <ArrowRight size={14} aria-hidden="true" />
+              </Link>
+            ) : (
+              <span />
+            )}
+          </nav>
+        </article>
+
+        <PageToc items={toc} />
       </div>
-
-      <div className={styles.twoCol} style={{ marginTop: 28 }}>
-        <div className={styles.panel} style={{ marginTop: 0 }}>
-          <h2 className={styles.panelTitle}>Props</h2>
-          <PropTable props={component.docs.props} />
-        </div>
-
-        <div className={styles.panel} style={{ marginTop: 0 }}>
-          <h2 className={styles.panelTitle}>Notes</h2>
-          <ul className={styles.notes}>
-            {component.docs.notes.map((note) => (
-              <li key={note}>{note}</li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      <div className={styles.panel}>
-        <h2 className={styles.panelTitle}>Usage</h2>
-        <CodeBlock code={usage} language="jsx" filename="usage.jsx" />
-      </div>
-
-      <nav className={styles.pager}>
-        {prev ? (
-          <Link to={`/docs/components/${prev.id}`} className={styles.pagerLink}>
-            <ArrowLeft size={14} aria-hidden="true" />
-            <span>
-              <em>Previous</em>
-              {prev.name}
-            </span>
-          </Link>
-        ) : (
-          <span />
-        )}
-        {next ? (
-          <Link to={`/docs/components/${next.id}`} className={styles.pagerLink} data-next>
-            <span>
-              <em>Next</em>
-              {next.name}
-            </span>
-            <ArrowRight size={14} aria-hidden="true" />
-          </Link>
-        ) : (
-          <span />
-        )}
-      </nav>
     </div>
   );
 }

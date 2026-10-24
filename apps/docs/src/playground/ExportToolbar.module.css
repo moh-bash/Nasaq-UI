@@ -49,3 +49,17 @@
   background: var(--ui-hover);
   border-color: var(--ui-rule-strong);
 }
+
+/* The studio toolbar has to stay on one row next to a 300px inspector. Below
+   this width the actions become square icon buttons with aria-labels. */
+@media (max-width: 1600px) {
+  .label {
+    display: none;
+  }
+
+  .action {
+    width: 30px;
+    padding: 0;
+    justify-content: center;
+  }
+}

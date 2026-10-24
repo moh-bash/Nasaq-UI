@@ -1,9 +1,9 @@
-import { Link, NavLink, useMatch } from 'react-router-dom';
-import { MoonStar, SunMedium } from 'lucide-react';
-import { useTheme } from '../providers/ThemeProvider.jsx';
+import { Link } from 'react-router-dom';
+import { Menu, MoonStar, Search, SunMedium } from 'lucide-react';
+import { useTheme } from '../hooks/useTheme.js';
 import Logo from '../playground/Logo.jsx';
-import { getFirstReadyComponentId } from '../utils/shellStorage.js';
-import { readyComponents } from '../registry/componentRegistry.js';
+import { useShell } from '../layouts/useShell.js';
+import { useShellStore } from '../stores/shellStore.js';
 import styles from './SiteHeader.module.css';
 
 const GITHUB_URL = 'https://github.com/moh-bash/Nasaq-UI';
@@ -19,65 +19,72 @@ function GitHubMark({ size = 16 }) {
   );
 }
 
-function getStoredLastComponent() {
-  try {
-    if (typeof window === 'undefined' || !window.localStorage) return null;
-    return window.localStorage.getItem('nq.shell.lastComponent');
-  } catch {
-    return null;
-  }
-}
-
 export default function SiteHeader() {
-  const { theme, setMode } = useTheme();
-  const isDark = theme.mode === 'dark';
-  const isPlayground = !!useMatch('/docs/components/:componentId/playground');
-  const stored = getStoredLastComponent();
-  const fallback = getFirstReadyComponentId({ readyComponents });
-  const last = stored && readyComponents.find((c) => c.id === stored) ? stored : fallback;
-  const playgroundTo = `/docs/components/${last}/playground`;
+  const { resolvedMode, setMode } = useTheme();
+  const shell = useShell();
+  const { inDocs, isNarrow, mobileOpen } = shell;
+  const setCommandOpen = useShellStore((state) => state.setCommandOpen);
+  const isDark = resolvedMode === 'dark';
 
   return (
     <header className={styles.header}>
-      <Link to="/" className={styles.brand} aria-label="Nasaq UI home">
-        <Logo size={44} className={styles.brandMark} />
+      {inDocs && isNarrow ? (
+        <button
+          type="button"
+          id="shell-mobile-trigger"
+          className={styles.iconButton}
+          aria-label="Open documentation menu"
+          aria-expanded={mobileOpen}
+          aria-controls="docs-sidebar"
+          title="Open documentation menu"
+          onClick={shell.openMobileDrawer}
+        >
+          <Menu size={18} aria-hidden="true" />
+        </button>
+      ) : null}
+
+      <Link to="/" className={styles.brand}>
+        <Logo size={32} className={styles.brandMark} />
         <span className={styles.wordmark}>
           <span className={styles.name}>Nasaq UI</span>
           <span className={styles.tagline}>Developer tooling for refined interfaces</span>
         </span>
       </Link>
 
-      <nav className={styles.nav} aria-label="Primary">
-        <NavLink to="/docs" end className={({ isActive }) => (isActive && !isPlayground ? styles.active : styles.link)}>
-          Docs
-        </NavLink>
-        <NavLink
-          to={playgroundTo}
-          className={() => (isPlayground ? styles.active : styles.link)}
-        >
-          Playground
-        </NavLink>
-      </nav>
-
       <div className={styles.actions}>
+        {inDocs ? (
+          <button
+            type="button"
+            className={styles.searchTrigger}
+            onClick={() => setCommandOpen(true)}
+            aria-keyshortcuts="Control+K Meta+K"
+            title="Search components and actions"
+          >
+            <Search size={14} aria-hidden="true" />
+            <span className={styles.searchLabel}>Search…</span>
+            <kbd className={styles.kbd}>⌘K</kbd>
+          </button>
+        ) : null}
+
         <button
           type="button"
-          className={styles.themeToggle}
+          className={styles.iconButton}
           aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+          title={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
           onClick={() => setMode(isDark ? 'light' : 'dark')}
         >
           {isDark ? <SunMedium size={16} aria-hidden="true" /> : <MoonStar size={16} aria-hidden="true" />}
-          <span>{isDark ? 'Light' : 'Dark'}</span>
         </button>
+
         <a
           href={GITHUB_URL}
           target="_blank"
           rel="noreferrer"
-          className={styles.themeToggle}
+          className={styles.iconButton}
           aria-label="Nasaq UI source on GitHub"
+          title="Nasaq UI on GitHub"
         >
           <GitHubMark size={16} />
-          <span>GitHub</span>
         </a>
       </div>
     </header>

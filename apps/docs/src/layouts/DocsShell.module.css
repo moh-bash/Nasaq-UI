@@ -1,4 +1,7 @@
 .shell {
+  --shell-header-height: 56px;
+  --shell-sidebar-width: 280px;
+  --shell-rail-width: 56px;
   height: 100dvh;
   overflow: hidden;
   display: flex;
@@ -15,16 +18,16 @@
 
 .sidebar {
   flex: none;
-  width: 258px;
+  width: var(--shell-sidebar-width);
   height: 100%;
   min-height: 0;
   overflow: hidden;
   transition: width 180ms ease;
-  border-right: 1px solid color-mix(in srgb, var(--ui-ink) 8%, transparent);
+  border-inline-end: 1px solid color-mix(in srgb, var(--ui-ink) 8%, transparent);
 }
 
 .sidebar[data-collapsed='true'] {
-  width: 0;
+  width: var(--shell-rail-width);
 }
 
 .main {
@@ -32,6 +35,7 @@
   min-width: 0;
   min-height: 0;
   overflow: auto;
+  scroll-behavior: smooth;
 }
 
 .shell[data-view='playground'] .main {
@@ -47,16 +51,16 @@
 @media (max-width: 1080px) {
   .sidebar {
     position: fixed;
-    top: 0;
+    top: var(--shell-header-height);
     bottom: 0;
-    left: 0;
+    inset-inline-start: 0;
     width: 300px;
     max-width: 86vw;
     z-index: 70;
     transform: translateX(-101%);
     transition: transform 200ms ease;
     box-shadow: var(--shadow-pop);
-    background: linear-gradient(180deg, color-mix(in srgb, var(--ui-paper) 98%, #ffffff) 0%, color-mix(in srgb, var(--ui-paper) 94%, var(--ui-ink) 2%) 100%);
+    background: var(--ui-paper);
   }
 
   .sidebar[data-mobile='open'] {
@@ -70,17 +74,29 @@
   .backdrop {
     display: block;
     position: fixed;
-    inset: 0;
+    inset: var(--shell-header-height) 0 0 0;
     z-index: 60;
     border: 0;
     padding: 0;
-    background: rgba(20, 22, 26, 0.28);
+    background: color-mix(in srgb, var(--ui-ink) 30%, transparent);
     cursor: pointer;
   }
+}
+
+:global([dir='rtl']) .sidebar {
+  transform: translateX(101%);
+}
+
+:global([dir='rtl']) .sidebar[data-mobile='open'] {
+  transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .sidebar {
     transition: none;
+  }
+
+  .main {
+    scroll-behavior: auto;
   }
 }

@@ -4,6 +4,7 @@ import CodeBlock from '../components/docs/CodeBlock.jsx';
 import { defaultButtonConfig } from '../config/buttonDefaults.js';
 import { generateButtonJSX } from '../generators/css/generateButtonJSX.js';
 import { readyComponents } from '../registry/componentRegistry.js';
+import { paths } from '../routes.js';
 import styles from './page.module.css';
 
 const INSTALL_CODE = ['npm install nasaq', '', 'Then import the stylesheet once and the components you use:'].join('\n');
@@ -19,17 +20,17 @@ const USAGE_CODE = generateButtonJSX(defaultButtonConfig);
 
 const NEXT_STEPS = [
   {
-    to: '/docs/installation',
+    to: paths.installation,
     title: 'Installation',
     body: 'Requirements, framework setup and the one import every project needs.',
   },
   {
-    to: '/docs/components',
+    to: paths.components,
     title: 'Components',
     body: 'Browse the ready controls, their props and the generated code they ship.',
   },
   {
-    to: '/docs/theming',
+    to: paths.theming,
     title: 'Theming',
     body: 'The token set every component reads from, and how to restyle it in one place.',
   },
@@ -52,11 +53,11 @@ export default function DocsIndexPage() {
             blocks, and generated JSX, CSS and Tailwind you can drop straight into a project.
           </p>
           <div className={styles.actions}>
-            <Link to="/docs/installation" className={styles.primaryAction}>
+            <Link to={paths.installation} className={styles.primaryAction}>
               Install now
               <ArrowRight size={16} aria-hidden="true" />
             </Link>
-            <Link to="/docs/components" className={styles.secondaryAction}>
+            <Link to={paths.components} className={styles.secondaryAction}>
               Browse components
             </Link>
           </div>
@@ -80,7 +81,7 @@ export default function DocsIndexPage() {
         <CodeBlock code={USAGE_CODE} language="jsx" filename="ActionButton.jsx" />
         <p className={styles.sectionNote} style={{ marginTop: 14 }}>
           That is the exact usage file the Button ready component exports from its{' '}
-          <Link to="/docs/components/button">documentation page</Link>. Open any ready component in
+          <Link to={paths.componentDocs('button')}>documentation page</Link>. Open any ready component in
           the playground to generate the matching stylesheet or a self-contained Tailwind version.
         </p>
       </section>
@@ -104,7 +105,7 @@ export default function DocsIndexPage() {
                 Live previews, presets and exports for every ready component.
               </p>
               <span className={styles.cardCategory}>
-                <Link to="/playground/accordion">Open the studio</Link>
+                <Link to={paths.playground('accordion')}>Open the studio</Link>
               </span>
             </div>
           ) : null}

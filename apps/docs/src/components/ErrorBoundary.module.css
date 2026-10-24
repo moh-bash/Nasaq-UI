@@ -1,0 +1,46 @@
+.fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid var(--ui-rule);
+  border-radius: 14px;
+  background: var(--ui-panel);
+}
+
+.title {
+  font-size: var(--text-15);
+  font-weight: 650;
+}
+
+.text {
+  max-width: 60ch;
+  font-size: var(--text-13);
+  color: var(--ui-ink-2);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.retry,
+.reload {
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--ui-rule);
+  border-radius: var(--radius-md);
+  background: var(--ui-panel);
+  font-size: var(--text-12);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.retry {
+  border-color: transparent;
+  background: var(--color-primary);
+  color: var(--color-on-primary, #fff);
+}

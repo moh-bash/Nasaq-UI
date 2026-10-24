@@ -1,33 +1,28 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'sonner';
 import { buildOutput } from '../generators/index.js';
 import { useComponentConfig } from '../hooks/useComponentConfig.js';
 import { useMediaQuery } from '../hooks/useMediaQuery.js';
-import { useTheme } from '../providers/ThemeProvider.jsx';
-import { useStylingMode } from '../providers/StylingModeProvider.jsx';
+import { useTheme } from '../hooks/useTheme.js';
+import { useStylingMode } from '../hooks/useStylingMode.js';
+import { useClipboard } from '../hooks/useClipboard.js';
 import PreviewWorkspace from './PreviewWorkspace.jsx';
 import PropertiesPanel from './PropertiesPanel.jsx';
-import { useShell } from '../layouts/ShellContext.jsx';
+import { useShellStore } from '../stores/shellStore.js';
+import { useComponentConfigStore } from '../stores/componentConfigStore.js';
+import { buildShareUrl, clearShareHash, readShareFromLocation, writeShareHash } from '../utils/shareLink.js';
 import styles from './Studio.module.css';
 
 /* The full studio for one component: live preview + code, inspector.
    Sidebar is provided by the shared shell. */
 export default function Playground({ component }) {
-  const { resolved } = useTheme();
+  const { resolved, mode, overrides, replaceTheme } = useTheme();
   const { mode: stylingMode, setMode: setStylingMode } = useStylingMode();
-  const shell = useShell();
-  const onToggleSidebar = shell
-    ? () => {
-        if (shell.isNarrow) {
-          if (shell.mobileOpen) {
-            shell.closeMobileDrawer();
-          } else {
-            shell.openMobileDrawer();
-          }
-        } else {
-          shell.toggleCollapsed();
-        }
-      }
-    : () => {};
+  const closeMobileDrawer = useShellStore((state) => state.closeMobileDrawer);
+  const inspectorPreference = useShellStore((state) => state.inspectorOpen);
+  const setInspectorOpen = useShellStore((state) => state.setInspectorOpen);
+  const setWholeConfig = useComponentConfigStore((state) => state.setConfig);
+  const { copy } = useClipboard();
 
   const {
     config,
@@ -43,25 +38,101 @@ export default function Playground({ component }) {
     restorePreset,
   } = useComponentConfig(component);
 
+  const [sharePayload] = useState(() => readShareFromLocation());
+  const [shareNotice, setShareNotice] = useState(() => {
+    if (!sharePayload) return null;
+    if (sharePayload.id !== component.id) {
+      return {
+        message: `This link was saved for ${sharePayload.id}, not ${component.name}.`,
+        canUndo: false,
+      };
+    }
+    try {
+      if (sharePayload.config) component.validate(sharePayload.config);
+      return { message: 'Loaded from a shared link.', canUndo: true };
+    } catch {
+      return { message: 'That share link could not be applied.', canUndo: false };
+    }
+  });
+  const previousShareRef = useRef(null);
+  const shareApplied = useRef(false);
+
+  useEffect(() => {
+    if (shareApplied.current || !sharePayload || sharePayload.id !== component.id) return;
+    shareApplied.current = true;
+
+    try {
+      if (sharePayload.config) {
+        setWholeConfig(component, sharePayload.config, 'Shared configuration');
+      }
+      if (sharePayload.theme) {
+        replaceTheme({ mode: sharePayload.theme.mode, overrides: sharePayload.theme.overrides });
+      }
+      previousShareRef.current = { config, theme: { mode, overrides } };
+    } catch {
+      clearShareHash();
+    }
+  }, [component, config, mode, overrides, replaceTheme, setWholeConfig, sharePayload]);
+
+  const handleShare = async () => {
+    const payload = { id: component.id, config, theme: { mode, overrides } };
+    const url = buildShareUrl(payload);
+    writeShareHash(payload);
+    const ok = await copy(url);
+    if (ok) toast.success('Share link copied — it restores this exact setup');
+    else toast.error('Could not copy the share link');
+    setShareNotice({
+      message: ok ? 'Share link copied. The address bar now points at this setup.' : 'Share link created.',
+      canUndo: false,
+    });
+  };
+
+  const handleUndoShare = () => {
+    const previous = previousShareRef.current;
+    if (previous) {
+      setWholeConfig(component, previous.config, 'Restored configuration');
+      replaceTheme(previous.theme);
+    }
+    clearShareHash();
+    setShareNotice(null);
+    toast.success('Restored your previous configuration');
+  };
+
+  const handleDismissShare = () => setShareNotice(null);
+
+  const handleResetAll = () => {
+    resetAll();
+    clearShareHash();
+    setShareNotice(null);
+    toast.success('Reset this component to its defaults');
+  };
+
+  const handlePreset = (presetId) => {
+    applyPresetById(presetId);
+    const preset = presets.find((entry) => entry.id === presetId);
+    toast.success(`Applied ${preset?.label || 'preset'} preset`);
+  };
+
+  const handleResetSection = (sectionId) => {
+    resetSection(sectionId);
+    toast.success('Reset section to its defaults');
+  };
+
   const isNarrow = useMediaQuery('(max-width: 1080px)');
-  const [prefs, setPrefs] = useState(null);
-  const prefsApply = prefs !== null && prefs.narrow === isNarrow;
-  const inspectorOpen = prefsApply ? prefs.inspector : !isNarrow;
-  const setPanelPrefs = (patch) => setPrefs({ narrow: isNarrow, inspector: inspectorOpen, ...patch });
+  const inspectorOpen = inspectorPreference ?? !isNarrow;
+  const setPanelOpen = (open) => setInspectorOpen(open);
 
   useEffect(() => {
     if (!isNarrow) return undefined;
     const onKeyDown = (event) => {
       if (event.key === 'Escape') {
-        setPrefs({ narrow: true, inspector: false });
-      }
-      if (event.key === 'Escape' && shell?.closeMobileDrawer) {
-        shell.closeMobileDrawer();
+        setInspectorOpen(false);
+        closeMobileDrawer();
       }
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [isNarrow, shell]);
+  }, [closeMobileDrawer, isNarrow, setInspectorOpen]);
 
   const previewCss = useMemo(() => {
     const output = component.generators.css(config, resolved);
@@ -75,18 +146,16 @@ export default function Playground({ component }) {
 
   const drawerOpen = inspectorOpen && isNarrow;
   const closeDrawers = () => {
-    setPrefs({ narrow: true, inspector: false });
-    if (shell?.closeMobileDrawer) shell.closeMobileDrawer();
+    setInspectorOpen(false);
+    closeMobileDrawer();
   };
-
-  const sidebarOpenForWorkspace = shell ? (!shell.collapsed || (shell.isNarrow && shell.mobileOpen)) : true;
 
   return (
     <div
       className={styles.studio}
       data-inspector={inspectorOpen ? 'open' : 'closed'}
     >
-      <main className={styles.main}>
+      <div className={styles.main}>
         <PreviewWorkspace
           component={component}
           config={config}
@@ -98,15 +167,18 @@ export default function Playground({ component }) {
           presets={presets}
           activePresetId={activePresetId}
           presetModified={presetModified}
-          onSelectPreset={applyPresetById}
+          onSelectPreset={handlePreset}
           onRestorePreset={restorePreset}
-          onResetAll={resetAll}
+          onResetAll={handleResetAll}
+          onShare={handleShare}
           lastChange={lastChange}
-          sidebarOpen={sidebarOpenForWorkspace}
-          onToggleSidebar={onToggleSidebar}
-          onToggleInspector={() => setPanelPrefs({ inspector: !inspectorOpen })}
+          onToggleInspector={() => setPanelOpen(!inspectorOpen)}
+          inspectorOpen={inspectorOpen}
+          shareNotice={shareNotice}
+          onUndoShare={handleUndoShare}
+          onDismissShare={handleDismissShare}
         />
-      </main>
+      </div>
 
       <div className={styles.inspectorSlot} inert={isNarrow && !inspectorOpen ? true : undefined}>
         <PropertiesPanel
@@ -114,7 +186,7 @@ export default function Playground({ component }) {
           config={config}
           onChange={updateConfig}
           onItemsChange={(items) => updateSection('content', { items })}
-          onResetSection={resetSection}
+          onResetSection={handleResetSection}
         />
       </div>
 

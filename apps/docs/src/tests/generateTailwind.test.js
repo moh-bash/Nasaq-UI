@@ -28,7 +28,7 @@ describe('generateAccordionTailwindJSX', () => {
     const jsx = generateAccordionTailwindJSX(accordion, lightTheme);
     expect(jsx).toContain('export default function');
     expect(jsx).toContain("import { useState } from 'react';");
-    expect(jsx).toContain('--acc-qsize');
+    expect(jsx).toContain('--nq-acc-question-size');
   });
 
   it('never leaks an unresolved value placeholder', () => {
@@ -60,7 +60,7 @@ describe('generateButtonTailwindJSX', () => {
     const jsx = generateButtonTailwindJSX(button);
     expect(jsx).toContain('export default function ActionButton()');
     expect(jsx).toContain('inline-flex');
-    expect(jsx).toContain('hover:bg-primary/90');
+    expect(jsx).toContain('hover:bg-[color:var(--nq-btn-bg-hover)]');
     expect(jsx).not.toContain('${');
   });
 
@@ -68,7 +68,7 @@ describe('generateButtonTailwindJSX', () => {
     const jsx = generateButtonTailwindJSX(
       validateButtonConfig({ colors: { hoverBackground: '#123456' } }),
     );
-    expect(jsx).toContain('color-mix(in_srgb,#123456');
+    expect(jsx).toContain('"#123456"');
   });
 
   it('marks a loading button busy and disabled', () => {

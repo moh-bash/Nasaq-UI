@@ -1,12 +1,25 @@
-import { useState } from 'react';
-import { ArrowDown, ArrowUp, ChevronRight, Plus, RotateCcw, Trash2 } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import {
+  ArrowDown,
+  ArrowUp,
+  ChevronRight,
+  ChevronsDownUp,
+  ChevronsUpDown,
+  Plus,
+  RotateCcw,
+  Search,
+  Trash2,
+  X,
+} from 'lucide-react';
 import { getPath } from '../utils/validateConfig.js';
 import { makeItemId } from '../utils/ids.js';
-import { useTheme } from '../providers/ThemeProvider.jsx';
+import { useTheme } from '../hooks/useTheme.js';
 import { PropertyControl, Switch } from './PropertyControl.jsx';
 import ThemeEditor from './ThemeEditor.jsx';
 import controls from './controls.module.css';
 import styles from './PropertiesPanel.module.css';
+
+const OPEN_BY_DEFAULT = new Set(['content', 'appearance', 'colors']);
 
 function fieldVisible(field, config) {
   if (field.dependsOn) return Boolean(getPath(config, field.dependsOn));
@@ -14,6 +27,10 @@ function fieldVisible(field, config) {
     return field.dependsOnValue.values.includes(getPath(config, field.dependsOnValue.path));
   }
   return true;
+}
+
+function sameValue(a, b) {
+  return JSON.stringify(a) === JSON.stringify(b);
 }
 
 function ItemsEditor({ items, onChange, itemType = 'accordion' }) {
@@ -111,30 +128,37 @@ function ItemsEditor({ items, onChange, itemType = 'accordion' }) {
   );
 }
 
-function CollapsibleSection({ section, config, defaultOpen, onReset, controlProps, onItemsChange }) {
-  const [open, setOpen] = useState(defaultOpen);
-
+function CollapsibleSection({ section, config, open, onToggle, onReset, modified, controlProps, onItemsChange }) {
   return (
-    <section className={styles.section}>
+    <section className={styles.section} data-modified={modified ? 'true' : undefined}>
       <div className={styles.sectionHead}>
         <button
           type="button"
           className={styles.sectionToggle}
           aria-expanded={open}
-          onClick={() => setOpen((value) => !value)}
+          onClick={onToggle}
         >
           <ChevronRight size={14} className={styles.chevron} data-open={open} aria-hidden="true" />
           <span className={styles.sectionTitle}>{section.label}</span>
+          {modified ? (
+            <span
+              className={styles.modifiedDot}
+              title={`${section.label} differs from the defaults`}
+              aria-label="Modified"
+            />
+          ) : null}
         </button>
-        <button
-          type="button"
-          className={styles.resetBtn}
-          title={`Reset ${section.label.toLowerCase()} to defaults`}
-          aria-label={`Reset ${section.label.toLowerCase()} to defaults`}
-          onClick={onReset}
-        >
-          <RotateCcw size={12} aria-hidden="true" />
-        </button>
+        {modified ? (
+          <button
+            type="button"
+            className={styles.resetBtn}
+            title={`Reset ${section.label.toLowerCase()} to defaults`}
+            aria-label={`Reset ${section.label.toLowerCase()} to defaults`}
+            onClick={onReset}
+          >
+            <RotateCcw size={12} aria-hidden="true" />
+          </button>
+        ) : null}
       </div>
 
       {open ? (
@@ -143,7 +167,7 @@ function CollapsibleSection({ section, config, defaultOpen, onReset, controlProp
             if (!fieldVisible(field, config)) return null;
             if (field.type === 'items') {
               return (
-                  <div key={field.path} style={{ paddingTop: 6 }}>
+                <div key={field.path} style={{ paddingTop: 6 }}>
                   <ItemsEditor
                     items={config.content?.items || []}
                     itemType={field.itemType}
@@ -169,16 +193,53 @@ function CollapsibleSection({ section, config, defaultOpen, onReset, controlProp
   );
 }
 
-const OPEN_BY_DEFAULT = new Set(['content', 'appearance', 'colors']);
-
 export default function PropertiesPanel({ component, config, onChange, onItemsChange, onResetSection }) {
   const [tab, setTab] = useState('component');
+  const [query, setQuery] = useState('');
+  const [openSections, setOpenSections] = useState(() =>
+    Object.fromEntries(component.sections.map((section) => [section.id, OPEN_BY_DEFAULT.has(section.id)])),
+  );
   const { theme, resolved, setMode, setToken, resetToken, resetTheme } = useTheme();
 
   const controlProps = { onChange, resolvedTheme: resolved };
+  const search = query.trim().toLowerCase();
+
+  const sections = useMemo(
+    () =>
+      component.sections
+        .map((section) => {
+          if (!search) return section;
+          const labelMatch = section.label.toLowerCase().includes(search);
+          const fields = section.fields.filter((field) => field.label.toLowerCase().includes(search));
+          if (!labelMatch && fields.length === 0) return null;
+          return { ...section, fields: labelMatch ? section.fields : fields };
+        })
+        .filter(Boolean),
+    [component.sections, search],
+  );
+
+  const modifiedSections = useMemo(
+    () =>
+      new Set(
+        component.sections
+          .filter((section) => !sameValue(config[section.id], component.defaultConfig[section.id]))
+          .map((section) => section.id),
+      ),
+    [component, config],
+  );
+
+  const allOpen = component.sections.every((section) => openSections[section.id]);
+  const toggleAll = () => {
+    const next = Object.fromEntries(component.sections.map((section) => [section.id, !allOpen]));
+    setOpenSections(next);
+  };
 
   return (
-    <aside className={styles.panel} aria-label="Properties inspector">
+    <aside
+      className={styles.panel}
+      id="properties-inspector"
+      aria-label="Properties inspector"
+    >
       <div className={styles.head}>
         <div className={styles.tabs} role="tablist" aria-label="Inspector mode">
           <button
@@ -206,19 +267,56 @@ export default function PropertiesPanel({ component, config, onChange, onItemsCh
         </div>
       </div>
 
+      {tab === 'component' ? (
+        <div className={styles.filterBar}>
+          <label className={styles.search}>
+            <Search size={13} aria-hidden="true" />
+            <input
+              type="search"
+              value={query}
+              placeholder="Find a property…"
+              aria-label="Find a property"
+              onChange={(event) => setQuery(event.target.value)}
+            />
+            {query ? (
+              <button type="button" aria-label="Clear property search" onClick={() => setQuery('')}>
+                <X size={12} aria-hidden="true" />
+              </button>
+            ) : null}
+          </label>
+          <button
+            type="button"
+            className={styles.collapseBtn}
+            onClick={toggleAll}
+            aria-label={allOpen ? 'Collapse all sections' : 'Expand all sections'}
+            title={allOpen ? 'Collapse all sections' : 'Expand all sections'}
+          >
+            {allOpen ? <ChevronsDownUp size={14} aria-hidden="true" /> : <ChevronsUpDown size={14} aria-hidden="true" />}
+          </button>
+        </div>
+      ) : null}
+
       <div className={styles.body} id="inspector-panel" role="tabpanel" aria-labelledby={`inspector-tab-${tab}`}>
         {tab === 'component' ? (
-          component.sections.map((section) => (
-            <CollapsibleSection
-              key={section.id}
-              section={section}
-              config={config}
-              defaultOpen={OPEN_BY_DEFAULT.has(section.id)}
-              onReset={() => onResetSection(section.id)}
-              controlProps={controlProps}
-              onItemsChange={onItemsChange}
-            />
-          ))
+          sections.length === 0 ? (
+            <p className={styles.noResults}>No properties match “{query}”.</p>
+          ) : (
+            sections.map((section) => (
+              <CollapsibleSection
+                key={section.id}
+                section={section}
+                config={config}
+                open={search ? true : Boolean(openSections[section.id])}
+                onToggle={() =>
+                  setOpenSections((current) => ({ ...current, [section.id]: !current[section.id] }))
+                }
+                onReset={() => onResetSection(section.id)}
+                modified={modifiedSections.has(section.id)}
+                controlProps={controlProps}
+                onItemsChange={onItemsChange}
+              />
+            ))
+          )
         ) : (
           <ThemeEditor
             theme={theme}
