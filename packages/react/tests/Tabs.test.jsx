@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { Tabs } from '../src/index.js';
+import { Tabs } from '../src/index';
 
 describe('Tabs', () => {
   const items = [

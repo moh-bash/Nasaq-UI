@@ -1,4 +1,7 @@
+/* global process */
 import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { render } from '@testing-library/react';
 import { Button, Accordion, Tabs, resolveTheme } from 'nasaq';
 import { generateButtonCSS } from '../generators/css/generateButtonCSS.js';
@@ -30,6 +33,10 @@ import { validateConfig } from '../utils/validateConfig.js';
 */
 
 const theme = resolveTheme({ mode: 'light', overrides: {} });
+const libraryCss = readFileSync(
+  resolve(process.cwd(), '../../packages/react/src/styles/index.css'),
+  'utf8',
+);
 
 function classesIn(container) {
   const found = new Set();
@@ -40,7 +47,7 @@ function classesIn(container) {
 }
 
 function missingSelectors(css, container) {
-  const selectors = new Set(extractClassSelectors(css));
+  const selectors = new Set(extractClassSelectors(`${libraryCss}\n${css}`));
   return [...classesIn(container)].filter(
     (name) => !selectors.has(name) && !NO_RULE_CLASSES.includes(name),
   );
@@ -50,7 +57,7 @@ function expectCovered(css, container, label) {
   expect(isLayerWrapped(css), `${label}: generated CSS must be wrapped in @layer nasaq`).toBe(true);
   expect(unprefixedClassSelectors(css), `${label}: unprefixed selectors`).toEqual([]);
   const missing = missingSelectors(css, container);
-  expect(missing, `${label}: no generated rule for ${missing.join(', ')}`).toEqual([]);
+  expect(missing, `${label}: no library rule for ${missing.join(', ')}`).toEqual([]);
 }
 
 const ICONS = ['none', 'plus', 'arrow-right', 'check', 'download', 'chevron-down'];

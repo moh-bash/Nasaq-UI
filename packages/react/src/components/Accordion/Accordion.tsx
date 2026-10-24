@@ -1,11 +1,35 @@
-import { useId, useRef, useState } from 'react';
+import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 
 /*
   Accordion — a dependency-free, accessible Q&A list.
 */
 
+export type AccordionIcon = 'chevron' | 'arrow' | 'plus' | 'number' | 'none';
 
-function Indicator({ icon, index }) {
+export interface AccordionItem {
+  id: string;
+  question: string;
+  answer: ReactNode;
+  disabled?: boolean;
+}
+
+export interface AccordionProps {
+  items?: AccordionItem[];
+  title?: string;
+  description?: string;
+  numbered?: boolean;
+  icon?: AccordionIcon;
+  iconPosition?: 'start' | 'end';
+  allowMultiple?: boolean;
+  allowCollapse?: boolean;
+  defaultOpenId?: string;
+  value?: string[];
+  onValueChange?: (value: string[]) => void;
+  emptyState?: ReactNode;
+  className?: string;
+}
+
+function Indicator({ icon, index }: { icon: AccordionIcon; index: number }) {
   if (icon === 'chevron') {
     return (
       <svg viewBox="0 0 24 24" width="100%" height="100%" focusable="false" aria-hidden="true">
@@ -66,18 +90,18 @@ export default function Accordion({
   onValueChange,
   emptyState = null,
   className = '',
-}) {
+}: AccordionProps) {
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '');
   const isControlled = Array.isArray(value);
-  const [uncontrolledOpenIds, setUncontrolledOpenIds] = useState(() =>
+  const [uncontrolledOpenIds, setUncontrolledOpenIds] = useState<string[]>(() =>
     defaultOpenId && items.some((item) => item.id === defaultOpenId) ? [defaultOpenId] : [],
   );
   const openIds = isControlled ? value : uncontrolledOpenIds;
-  const triggerRefs = useRef({});
+  const triggerRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
-  const setOpenIdsState = (updater) => {
+  const setOpenIdsState = (updater: string[] | ((current: string[]) => string[])) => {
     if (isControlled) {
-      const next = typeof updater === 'function' ? updater(value) : updater;
+      const next = typeof updater === 'function' ? updater(value || []) : updater;
       if (typeof onValueChange === 'function') {
         onValueChange(next);
       }
@@ -86,7 +110,7 @@ export default function Accordion({
     setUncontrolledOpenIds(updater);
   };
 
-  const toggle = (id) => {
+  const toggle = (id: string) => {
     setOpenIdsState((current) => {
       const isOpen = current.includes(id);
       if (isOpen) {
@@ -120,7 +144,7 @@ export default function Accordion({
       ) : (
         <div className="nq-acc-list">
           {items.map((item, index) => {
-            const isOpen = openIds.includes(item.id);
+            const isOpen = openIds?.includes(item.id) || false;
             const triggerId = `${uid}-trigger-${item.id}`;
             const panelId = `${uid}-panel-${item.id}`;
             const currentEnabledIndex = enabledItems.findIndex((entry) => entry.id === item.id);
@@ -143,17 +167,17 @@ export default function Accordion({
                     aria-controls={panelId}
                     disabled={item.disabled}
                     onClick={() => toggle(item.id)}
-                    onKeyDown={(event) => {
+                    onKeyDown={(event: KeyboardEvent<HTMLButtonElement>) => {
                       if (item.disabled) return;
                       if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
                       event.preventDefault();
                       if (enabledItems.length === 0) return;
-                      let next;
+                      let next: AccordionItem | undefined;
                       if (event.key === 'Home') next = enabledItems[0];
                       else if (event.key === 'End') next = enabledItems.at(-1);
                       else if (event.key === 'ArrowDown') next = enabledItems[(currentEnabledIndex + 1) % enabledItems.length];
                       else next = enabledItems[(currentEnabledIndex - 1 + enabledItems.length) % enabledItems.length];
-                      triggerRefs.current[next.id]?.focus();
+                      if (next) triggerRefs.current[next.id]?.focus();
                     }}
                   >
                     {showNumbering ? (

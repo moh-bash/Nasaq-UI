@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { Button } from '../src/index.js';
+import { Button } from '../src/index';
 
 describe('Button', () => {
   it('renders the label with the default classes', () => {

@@ -5,39 +5,57 @@
   "type": "module",
   "main": "./dist/nasaq.cjs",
   "module": "./dist/nasaq.js",
-  "types": "./types/index.d.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./types/index.d.ts",
-      "import": "./dist/nasaq.js",
-      "require": "./dist/nasaq.cjs"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/nasaq.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/nasaq.cjs"
+      }
     },
     "./styles.css": "./dist/styles.css",
     "./package.json": "./package.json"
   },
   "files": [
     "dist",
-    "types"
+    "CHANGELOG.md"
   ],
   "sideEffects": [
     "**/*.css"
   ],
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && node ./scripts/copy-dts.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check": "npm run build && npm run test && npm pack --dry-run"
+    "lint": "eslint .",
+    "check": "npm run build && npm run test && npm pack --dry-run && attw --pack . --profile node16 --exclude-entrypoints styles.css"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@eslint/js": "^10.0.1",
+    "@microsoft/api-extractor": "^7.59.4",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "^10.13.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.7",
+    "globals": "^17.13.0",
     "jsdom": "^30.1.2",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.72.0",
     "vite": "^8.3.0",
+    "vite-plugin-dts": "^5.1.2",
     "vitest": "^5.0.3"
   },
   "keywords": [

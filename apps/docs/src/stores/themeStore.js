@@ -38,6 +38,12 @@ function sanitizeOverrides(raw) {
     const trimmed = value.trim();
     if (HEX_RE.test(trimmed)) overrides[token] = trimmed.toLowerCase();
   }
+  // v2 exposed one generic solid-fill text override. v3 splits it into
+  // role-specific tokens; carry the user's choice into the primary fill.
+  if (overrides['on-solid']) {
+    if (!overrides['on-primary']) overrides['on-primary'] = overrides['on-solid'];
+    delete overrides['on-solid'];
+  }
   return overrides;
 }
 
@@ -135,7 +141,7 @@ export const useThemeStore = create(
       ),
       {
         name: KEY,
-        version: 2,
+        version: 3,
         storage: createJSONStorage(() => safeStorage),
         partialize: (state) => ({ mode: state.mode, overrides: state.overrides }),
         migrate: (persisted) => {

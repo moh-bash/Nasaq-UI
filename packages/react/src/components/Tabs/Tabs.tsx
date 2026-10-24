@@ -1,4 +1,27 @@
-import { useId, useRef, useState } from 'react';
+import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
+
+export type TabsVariant = 'underline' | 'pill' | 'boxed';
+export type TabsAlign = 'start' | 'center' | 'end' | 'stretch';
+
+export interface TabItem {
+  id: string;
+  label: ReactNode;
+  content: ReactNode;
+  disabled?: boolean;
+}
+
+export interface TabsProps {
+  items?: TabItem[];
+  defaultActiveId?: string;
+  value?: string;
+  onValueChange?: (id: string) => void;
+  variant?: TabsVariant;
+  align?: TabsAlign;
+  label?: string;
+  orientation?: 'horizontal' | 'vertical';
+  emptyState?: ReactNode;
+  className?: string;
+}
 
 export default function Tabs({
   items = [],
@@ -11,7 +34,7 @@ export default function Tabs({
   orientation = 'horizontal',
   emptyState = null,
   className = '',
-}) {
+}: TabsProps) {
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '');
   const isControlled = value !== undefined;
   const initial = defaultActiveId && items.some((item) => item.id === defaultActiveId)
@@ -23,10 +46,10 @@ export default function Tabs({
   const rootClass = ['nq-tabs', `nq-tabs--${variant}`, `nq-tabs--align-${align}`, className]
     .filter(Boolean)
     .join(' ');
-  const listRef = useRef(null);
-  const tabRefs = useRef({});
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
-  const setActive = (id) => {
+  const setActive = (id: string) => {
     if (!isControlled) {
       setUncontrolledActiveId(id);
     }
@@ -35,7 +58,7 @@ export default function Tabs({
     }
   };
 
-  const getDirection = () => {
+  const getDirection = (): 'ltr' | 'rtl' => {
     try {
       const el = listRef.current || document.documentElement;
       const dir = window.getComputedStyle(el).direction;
@@ -54,7 +77,7 @@ export default function Tabs({
   }
 
   return (
-    <div className={rootClass} dir={getDirection() === 'rtl' ? 'rtl' : undefined}>
+    <div className={rootClass}>
       <div
         ref={listRef}
         className="nq-tabs-list"
@@ -78,7 +101,7 @@ export default function Tabs({
               tabIndex={selected ? 0 : -1}
               disabled={item.disabled}
               onClick={() => setActive(item.id)}
-              onKeyDown={(event) => {
+              onKeyDown={(event: KeyboardEvent<HTMLButtonElement>) => {
                 const keys = orientation === 'vertical'
                   ? ['ArrowUp', 'ArrowDown', 'Home', 'End']
                   : ['ArrowRight', 'ArrowLeft', 'Home', 'End'];
@@ -88,7 +111,7 @@ export default function Tabs({
                 if (enabled.length === 0) return;
                 const current = enabled.findIndex((entry) => entry.id === item.id);
                 const dir = getDirection();
-                let next;
+                let next: TabItem | undefined;
                 if (event.key === 'Home') {
                   next = enabled[0];
                 } else if (event.key === 'End') {
@@ -99,6 +122,7 @@ export default function Tabs({
                   const forward = dir === 'rtl' ? event.key === 'ArrowLeft' : event.key === 'ArrowRight';
                   next = enabled[(current + (forward ? 1 : -1) + enabled.length) % enabled.length];
                 }
+                if (!next) return;
                 setActive(next.id);
                 tabRefs.current[next.id]?.focus();
               }}
@@ -108,15 +132,17 @@ export default function Tabs({
           );
         })}
       </div>
-      <div
-        id={`${uid}-panel-${activeItem.id}`}
-        className="nq-tabs-panel"
-        role="tabpanel"
-        aria-labelledby={`${uid}-tab-${activeItem.id}`}
-        tabIndex={0}
-      >
-        {activeItem.content}
-      </div>
+      {activeItem ? (
+        <div
+          id={`${uid}-panel-${activeItem.id}`}
+          className="nq-tabs-panel"
+          role="tabpanel"
+          aria-labelledby={`${uid}-tab-${activeItem.id}`}
+          tabIndex={0}
+        >
+          {activeItem.content}
+        </div>
+      ) : null}
     </div>
   );
 }

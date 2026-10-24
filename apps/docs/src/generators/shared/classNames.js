@@ -92,7 +92,7 @@ export function stripComments(css) {
 /** All class selectors (without the leading dot) found in a stylesheet. */
 export function extractClassSelectors(css) {
   const found = new Set();
-  const text = stripComments(css);
+  const text = stripComments(css).replace(/@import[^;]+;/g, '');
   const re = /\.(-?[_a-zA-Z][\w-]*)/g;
   let match;
   while ((match = re.exec(text)) !== null) {
@@ -108,6 +108,8 @@ export function unprefixedClassSelectors(css) {
 
 /** True when the whole component stylesheet is scoped to `@layer nasaq`. */
 export function isLayerWrapped(css) {
-  const trimmed = stripComments(css).trim();
+  const trimmed = stripComments(css)
+    .replace(/^@import[^;]+;\s*/gm, '')
+    .trim();
   return trimmed.startsWith('@layer nasaq {') && trimmed.endsWith('}');
 }

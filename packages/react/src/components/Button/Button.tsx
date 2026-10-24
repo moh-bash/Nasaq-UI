@@ -2,24 +2,52 @@
   Button — a reusable action control.
 */
 
-import { forwardRef } from 'react';
+import {
+  forwardRef,
+  type ButtonHTMLAttributes,
+  type ElementType,
+  type MouseEvent,
+  type ReactNode,
+  type Ref,
+} from 'react';
 
-const Button = forwardRef(function Button({
-  variant = 'primary',
-  size = 'md',
-  fullWidth = false,
-  align = 'start',
-  disabled = false,
-  loading = false,
-  leadingIcon = null,
-  trailingIcon = null,
-  type = 'button',
-  as: Component = 'button',
-  className = '',
-  children,
-  onClick,
-  ...rest
-}, ref) {
+declare const process: { env: { NODE_ENV?: string } };
+
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+export type ButtonSize = 'sm' | 'md' | 'lg';
+export type ButtonAlign = 'start' | 'center' | 'end';
+
+export interface ButtonProps
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'color'> {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  fullWidth?: boolean;
+  align?: ButtonAlign;
+  loading?: boolean;
+  leadingIcon?: ReactNode;
+  trailingIcon?: ReactNode;
+  as?: ElementType;
+}
+
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  {
+    variant = 'primary',
+    size = 'md',
+    fullWidth = false,
+    align = 'start',
+    disabled = false,
+    loading = false,
+    leadingIcon = null,
+    trailingIcon = null,
+    type = 'button',
+    as: Component = 'button',
+    className = '',
+    children,
+    onClick,
+    ...rest
+  },
+  ref,
+) {
   const classes = [
     'nq-btn',
     `nq-btn--${variant}`,
@@ -44,19 +72,19 @@ const Button = forwardRef(function Button({
     }
   }
 
-  const handleClick = (event) => {
+  const handleClick = (event: MouseEvent<HTMLElement>) => {
     if (isDisabled) {
       event.preventDefault();
       event.stopPropagation();
       return;
     }
     if (typeof onClick === 'function') {
-      onClick(event);
+      onClick(event as MouseEvent<HTMLButtonElement>);
     }
   };
 
-  const elementProps = {
-    ref,
+  const elementProps: Record<string, unknown> = {
+    ref: ref as Ref<HTMLElement>,
     className: classes,
     'aria-busy': loading ? 'true' : undefined,
     'aria-disabled': isDisabled ? 'true' : undefined,
@@ -64,36 +92,8 @@ const Button = forwardRef(function Button({
     ...rest,
   };
 
-  if (isLink) {
-    if (isDisabled) {
-      elementProps['aria-disabled'] = 'true';
-      elementProps.tabIndex = -1;
-    }
-    return (
-      <Component {...elementProps}>
-        {loading ? (
-          <span className="nq-btn__spinner" aria-hidden="true" />
-        ) : hasLeading ? (
-          <span className="nq-btn__icon" aria-hidden="true">
-            {leadingIcon}
-          </span>
-        ) : null}
-        {children ? <span className="nq-btn__label">{children}</span> : null}
-        {hasTrailing ? (
-          <span className="nq-btn__icon" aria-hidden="true">
-            {trailingIcon}
-          </span>
-        ) : null}
-      </Component>
-    );
-  }
-
-  return (
-    <Component
-      type={type}
-      {...elementProps}
-      disabled={disabled || loading}
-    >
+  const content = (
+    <>
       {loading ? (
         <span className="nq-btn__spinner" aria-hidden="true" />
       ) : hasLeading ? (
@@ -107,6 +107,20 @@ const Button = forwardRef(function Button({
           {trailingIcon}
         </span>
       ) : null}
+    </>
+  );
+
+  if (isLink) {
+    if (isDisabled) {
+      elementProps['aria-disabled'] = 'true';
+      elementProps.tabIndex = -1;
+    }
+    return <Component {...elementProps}>{content}</Component>;
+  }
+
+  return (
+    <Component type={type} {...elementProps} disabled={disabled || loading}>
+      {content}
     </Component>
   );
 });

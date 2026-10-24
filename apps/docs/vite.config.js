@@ -15,7 +15,7 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: 'nasaq/styles.css', replacement: resolve(nasaq, 'styles/index.css') },
-      { find: 'nasaq', replacement: resolve(nasaq, 'index.js') },
+      { find: 'nasaq', replacement: resolve(nasaq, 'index.ts') },
     ],
   },
   test: {

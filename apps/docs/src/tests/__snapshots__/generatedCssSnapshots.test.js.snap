@@ -1,8 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`defaultConfig generated CSS snapshots > Accordion.css 1`] = `
-"@layer nasaq {
-/* Accordion.css
+"/* Accordion.css
    Generated from the Component Playground configuration.
    Pairs with Accordion.jsx. Import both:
      import Accordion from './Accordion';
@@ -10,490 +9,144 @@ exports[`defaultConfig generated CSS snapshots > Accordion.css 1`] = `
    Colours reference the --color-* theme variables, with fallbacks.
 */
 
+@import 'nasaq/styles.css';
+
+@layer nasaq {
 .nq-acc {
-  --acc-dur: 280ms;
-  --acc-ease: cubic-bezier(0.2, 0, 0, 1);
-  --acc-icon: 18px;
-  box-sizing: border-box;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  width: 100%;
-  max-width: 640px;
-  margin-inline: auto;
-  text-align: left;
-  color: var(--color-text, #14161a);
-  background: var(--color-surface, #ffffff);
-  border: 1px solid var(--color-border, #d6d9d4);
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.nq-acc,
-.nq-acc *,
-.nq-acc *::before,
-.nq-acc *::after {
-  box-sizing: border-box;
-}
-
-.nq-acc-head {
-  margin: 0 0 24px;
-}
-
-.nq-acc-title {
-  margin: 0;
-  font-size: 26px;
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: 0em;
-  color: var(--color-text, #14161a);
-}
-
-.nq-acc-desc {
-  margin: 8px 0 0;
-  font-size: 15px;
-  line-height: 1.5;
-  color: var(--color-text-muted, #5c635e);
-}
-
-.nq-acc-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0px;
-  margin: 0;
-  padding: 0;
-}
-
-.nq-acc-item {
-  background: var(--color-surface, #ffffff);
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.nq-acc-item + .nq-acc-item {
-  border-top: 1px solid var(--color-border, #d6d9d4);
-}
-
-.nq-acc-item__header {
-  background: var(--color-surface, #ffffff);
-  border-radius: 6px;
-}
-
-.nq-acc-trigger {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 16px 20px;
-  margin: 0;
-  background: none;
-  border: 0;
-  border-radius: 6px;
-  font: inherit;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.55;
-  letter-spacing: 0em;
-  color: var(--color-text, #14161a);
-  text-align: inherit;
-  cursor: pointer;
-  -webkit-appearance: none;
-  appearance: none;
-  transition: background-color var(--acc-dur) var(--acc-ease);
-}
-
-.nq-acc-trigger:focus-visible {
-  outline: 2px solid var(--color-focus, #1e3ae0);
-  outline-offset: -2px;
-}
-
-.nq-acc-item:not(.nq-is-disabled) .nq-acc-item__header:hover {
-  background: var(--color-hover, #f1f3ef);
-}
-
-.nq-acc-item.nq-is-open .nq-acc-item__header {
-  background: var(--color-active, #ecf0ff);
-}
-
-.nq-acc-question {
-  flex: 1 1 auto;
-}
-
-.nq-acc-icon {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--acc-icon);
-  height: var(--acc-icon);
-  color: var(--color-primary, #1e3ae0);
-  transition: transform var(--acc-dur) var(--acc-ease);
-}
-
-.nq-acc--icon-start .nq-acc-icon {
-  order: -1;
-}
-
-.nq-acc-item.nq-is-open .nq-acc-icon--chevron {
-  transform: rotate(180deg);
-}
-
-.nq-acc-panel {
-  display: grid;
-  grid-template-rows: 0fr;
-  overflow: hidden;
-  transition: grid-template-rows var(--acc-dur) var(--acc-ease);
-}
-
-.nq-acc-item.nq-is-open .nq-acc-panel {
-  grid-template-rows: 1fr;
-}
-
-.nq-acc-panel__inner {
-  min-height: 0;
-  overflow: hidden;
-  padding: 8px 20px 16px;
-  background: var(--color-background, #edefec);
-  visibility: hidden;
-  transition: visibility 0s linear var(--acc-dur);
-}
-
-.nq-acc-item.nq-is-open .nq-acc-panel__inner {
-  visibility: visible;
-  transition-delay: 0s;
-}
-
-.nq-acc-answer {
-  font-size: 15px;
-  line-height: 1.55;
-  letter-spacing: 0em;
-  color: var(--color-text-muted, #5c635e);
-}
-
-.nq-acc-empty {
-  color: var(--color-text-muted, #5c635e);
-  font-size: 14px;
-  padding: 12px 0;
-}
-
-.nq-acc-item.nq-is-disabled .nq-acc-trigger {
-  cursor: not-allowed;
-  opacity: 0.55;
-}
-
-@media (max-width: 560px) {
-  .nq-acc {
-    max-width: 100%;
-  }
-  .nq-acc-head {
-    margin-bottom: 18px;
-  }
-  .nq-acc-title {
-    font-size: 22px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .nq-acc-panel,
-  .nq-acc-panel__inner,
-  .nq-acc-icon,
-  .nq-acc-trigger,
-  .nq-acc-plus__bar {
-    transition-duration: 0.01ms;
-  }
+  --nq-acc-width: 100%;
+  --nq-acc-max-width: 640px;
+  --nq-acc-margin-inline: auto;
+  --nq-acc-text-align: left;
+  --nq-acc-font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --nq-acc-radius: 6px;
+  --nq-acc-item-radius: 6px;
+  --nq-acc-question-radius: 6px;
+  --nq-acc-border-width: 1px;
+  --nq-acc-border-style: solid;
+  --nq-acc-shadow: none;
+  --nq-acc-item-shadow: none;
+  --nq-acc-bg: var(--color-surface, #ffffff);
+  --nq-acc-border-color: var(--color-border, #d6d9d4);
+  --nq-acc-duration: 280ms;
+  --nq-acc-easing: cubic-bezier(0.2, 0, 0, 1);
+  --nq-acc-icon-size: 18px;
+  --nq-acc-item-gap: 0px;
+  --nq-acc-divider-width: 1px;
+  --nq-acc-divider-color: var(--color-border, #d6d9d4);
+  --nq-acc-section-gap: 24px;
+  --nq-acc-question-padding-y: 16px;
+  --nq-acc-question-padding-x: 20px;
+  --nq-acc-content-gap: 8px;
+  --nq-acc-answer-padding: 16px;
+  --nq-acc-heading-size: 26px;
+  --nq-acc-heading-weight: 600;
+  --nq-acc-heading-fg: var(--color-text, #14161a);
+  --nq-acc-question-fg: var(--color-text, #14161a);
+  --nq-acc-question-size: 16px;
+  --nq-acc-question-weight: 500;
+  --nq-acc-answer-fg: var(--color-text-muted, #5c635e);
+  --nq-acc-answer-size: 15px;
+  --nq-acc-line-height: 1.55;
+  --nq-acc-letter-spacing: 0em;
+  --nq-acc-question-bg: var(--color-surface, #ffffff);
+  --nq-acc-answer-bg: var(--color-background, #edefec);
+  --nq-acc-hover-bg: var(--color-hover, #f1f3ef);
+  --nq-acc-open-bg: var(--color-active, #ecf0ff);
+  --nq-acc-icon-color: var(--color-primary, #1e3ae0);
+  --nq-acc-focus-color: var(--color-focus, #1e3ae0);
+  --nq-acc-answer-border-top-width: 0px;
+  --nq-acc-answer-border-block-width: 0px;
 }
 }"
 `;
 
 exports[`defaultConfig generated CSS snapshots > Button.css 1`] = `
-"@layer nasaq {
-/* Button.css
+"/* Button.css
    Generated from the Component Playground configuration.
    Pairs with Button.jsx. Import both:
      import Button from './Button';
      import './Button.css';
-   Variant colours inherit the --color-* theme tokens, with fallbacks,
-   so this file also works standalone.
+
+   Structural rules come from nasaq/styles.css; this file only overrides
+   the documented --nq-btn-* variables.
 */
 
+@import 'nasaq/styles.css';
+
+@layer nasaq {
 .nq-btn {
-  --btn-dur: 160ms;
-  --btn-ease: ease;
-  --btn-gap: 8px;
-  --btn-icon: 18px;
-  box-sizing: border-box;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--btn-gap);
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  font-weight: 600;
-  letter-spacing: 0em;
-  line-height: 1;
-  text-decoration: none;
-  white-space: nowrap;
-  border-radius: 10px;
-  border: 1px solid var(--btn-border);
-  background: var(--btn-bg);
-  color: var(--btn-fg);
-  cursor: pointer;
-  -webkit-appearance: none;
-  appearance: none;
-  user-select: none;
-  transition: background-color var(--btn-dur) var(--btn-ease),
-    border-color var(--btn-dur) var(--btn-ease), color var(--btn-dur) var(--btn-ease),
-    box-shadow var(--btn-dur) var(--btn-ease), transform var(--btn-dur) var(--btn-ease);
-}
-
-.nq-btn:hover:not(:disabled):not(.nq-is-loading) {
-  background: var(--btn-bg-hover);
-}
-
-.nq-btn:active:not(:disabled):not(.nq-is-loading) {
-  transform: translateY(1px);
-}
-
-.nq-btn:focus-visible {
-  outline: 2px solid var(--color-focus, #1e3ae0);
-  outline-offset: 2px;
-}
-
-.nq-btn:disabled,
-.nq-btn.nq-is-loading {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-.nq-btn--sm {
-  padding: 6px 12px;
-  font-size: 13px;
-  min-height: 32px;
-}
-
-.nq-btn--md {
-  padding: 10px 18px;
-  font-size: 15px;
-  min-height: 40px;
-}
-
-.nq-btn--lg {
-  padding: 13px 24px;
-  font-size: 16px;
-  min-height: 48px;
-}
-
-.nq-btn--full {
-  width: 100%;
-}
-
-.nq-btn--align-start {
-  margin-inline: 0;
-}
-
-.nq-btn--align-center {
-  margin-inline: auto;
-}
-
-.nq-btn--align-end {
-  margin-inline: auto 0;
+  --nq-btn-radius: 10px;
+  --nq-btn-gap: 8px;
+  --nq-btn-font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --nq-btn-font-weight: 600;
+  --nq-btn-letter-spacing: 0em;
+  --nq-btn-icon-size: 18px;
+  --nq-btn-border-width: 1px;
+  --nq-btn-border-style: solid;
+  --nq-btn-shadow: none;
+  --nq-btn-duration: 160ms;
+  --nq-btn-easing: ease;
+  --nq-btn-padding-y: 10px;
+  --nq-btn-padding-x: 18px;
+  --nq-btn-font-size: 15px;
+  --nq-btn-min-height: 40px;
 }
 
 .nq-btn--primary {
-  --btn-bg: var(--color-primary, #1e3ae0);
-  --btn-fg: var(--color-on-solid, #ffffff);
-  --btn-border: var(--color-primary, #1e3ae0);
-  --btn-bg-hover: color-mix(in srgb, var(--color-primary, #1e3ae0) 88%, #000);
+  --nq-btn-bg: var(--color-primary, #1e3ae0);
+  --nq-btn-fg: var(--color-on-primary, #ffffff);
+  --nq-btn-border-color: var(--color-primary, #1e3ae0);
+  --nq-btn-bg-hover: color-mix(in srgb, var(--color-primary, #1e3ae0) 88%, #000);
 }
 
 .nq-btn--secondary {
-  --btn-bg: var(--color-secondary, #0e4f45);
-  --btn-fg: var(--color-on-solid, #ffffff);
-  --btn-border: var(--color-secondary, #0e4f45);
-  --btn-bg-hover: color-mix(in srgb, var(--color-secondary, #0e4f45) 88%, #000);
+  --nq-btn-bg: var(--color-secondary, #0e4f45);
+  --nq-btn-fg: var(--color-on-secondary, #ffffff);
+  --nq-btn-border-color: var(--color-secondary, #0e4f45);
+  --nq-btn-bg-hover: color-mix(in srgb, var(--color-secondary, #0e4f45) 88%, #000);
 }
 
 .nq-btn--outline {
-  --btn-bg: transparent;
-  --btn-fg: var(--color-text, #14161a);
-  --btn-border: var(--color-border, #d6d9d4);
-  --btn-bg-hover: var(--color-hover, #f1f3ef);
+  --nq-btn-bg: transparent;
+  --nq-btn-fg: var(--color-text, #14161a);
+  --nq-btn-border-color: var(--color-border, #d6d9d4);
+  --nq-btn-bg-hover: var(--color-hover, #f1f3ef);
 }
 
 .nq-btn--ghost {
-  --btn-bg: transparent;
-  --btn-fg: var(--color-text, #14161a);
-  --btn-border: transparent;
-  --btn-bg-hover: var(--color-hover, #f1f3ef);
+  --nq-btn-bg: transparent;
+  --nq-btn-fg: var(--color-text, #14161a);
+  --nq-btn-border-color: transparent;
+  --nq-btn-bg-hover: var(--color-hover, #f1f3ef);
 }
 
 .nq-btn--danger {
-  --btn-bg: var(--color-danger, #c42b1c);
-  --btn-fg: var(--color-on-solid, #ffffff);
-  --btn-border: var(--color-danger, #c42b1c);
-  --btn-bg-hover: color-mix(in srgb, var(--color-danger, #c42b1c) 88%, #000);
+  --nq-btn-bg: var(--color-danger, #c42b1c);
+  --nq-btn-fg: var(--color-on-danger, #ffffff);
+  --nq-btn-border-color: var(--color-danger, #c42b1c);
+  --nq-btn-bg-hover: color-mix(in srgb, var(--color-danger, #c42b1c) 88%, #000);
 }
 
-.nq-btn__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-  width: var(--btn-icon);
-  height: var(--btn-icon);
-}
-
-.nq-btn__icon svg {
-  width: 100%;
-  height: 100%;
-}
-
-.nq-btn__label {
-  display: inline-block;
-}
-
-.nq-btn__spinner {
-  flex: none;
-  width: var(--btn-icon);
-  height: var(--btn-icon);
-  border-radius: 50%;
-  border: 2px solid currentColor;
-  border-top-color: transparent;
-  animation: nq-btn-spin 640ms linear infinite;
-}
-
-@keyframes nq-btn-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .nq-btn {
-    transition-duration: 0.01ms;
-  }
-  .nq-btn__spinner {
-    animation-duration: 1.6s;
-  }
-}
 }"
 `;
 
 exports[`defaultConfig generated CSS snapshots > Tabs.css 1`] = `
-"@layer nasaq {
-/* Tabs.css — generated by Nasaq UI. Pairs with Tabs.jsx. */
+"/* Tabs.css — generated by Nasaq UI. Pairs with Tabs.jsx.
+   Structural rules come from nasaq/styles.css. */
 
+@import 'nasaq/styles.css';
+
+@layer nasaq {
 .nq-tabs {
-  --tabs-active: var(--color-primary, #1e3ae0);
-  --tabs-text: var(--color-text, #14161a);
-  --tabs-muted: var(--color-text-muted, #5c635e);
-  --tabs-border: var(--color-border, #d6d9d4);
-  --tabs-panel: var(--color-surface, #ffffff);
-  --tabs-gap: 24px;
-  color: var(--tabs-text);
-}
-
-.nq-tabs-list {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 8px;
-  overflow-x: auto;
-}
-
-.nq-tabs--align-start .nq-tabs-list {
-  justify-content: flex-start;
-}
-
-.nq-tabs--align-center .nq-tabs-list {
-  justify-content: center;
-}
-
-.nq-tabs--align-end .nq-tabs-list {
-  justify-content: flex-end;
-}
-
-.nq-tabs--align-stretch .nq-tabs-list {
-  justify-content: stretch;
-}
-
-.nq-tabs--align-stretch .nq-tabs-list button {
-  flex: 1 1 0;
-}
-
-.nq-tabs-list button {
-  flex: 0 0 auto;
-  border: 0;
-  color: var(--tabs-muted);
-  background: transparent;
-  cursor: pointer;
-  font: inherit;
-  padding: 10px 14px;
-  transition: color 160ms ease-out, background-color 160ms ease-out, border-color 160ms ease-out;
-}
-
-.nq-tabs-list button:hover:not(:disabled),
-.nq-tabs-list button[aria-selected='true'] {
-  color: var(--tabs-active);
-}
-
-.nq-tabs-list button:focus-visible {
-  outline: 2px solid var(--color-focus, #1e3ae0);
-  outline-offset: 2px;
-}
-
-.nq-tabs-list button:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
-}
-
-.nq-tabs--underline .nq-tabs-list {
-  border-bottom: 1px solid var(--tabs-border);
-}
-
-.nq-tabs--underline .nq-tabs-list button[aria-selected='true'] {
-  box-shadow: inset 0 -2px 0 var(--tabs-active);
-}
-
-.nq-tabs--pill .nq-tabs-list button {
-  border-radius: 10px;
-}
-
-.nq-tabs--pill .nq-tabs-list button[aria-selected='true'] {
-  background: var(--tabs-active);
-  color: var(--color-on-solid, #ffffff);
-}
-
-.nq-tabs--boxed .nq-tabs-list {
-  padding: 4px;
-  border: 1px solid var(--tabs-border);
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--tabs-panel) 88%, var(--tabs-border));
-}
-
-.nq-tabs--boxed .nq-tabs-list button {
-  border-radius: 10px;
-}
-
-.nq-tabs--boxed .nq-tabs-list button[aria-selected='true'] {
-  background: var(--tabs-panel);
-  box-shadow: 0 1px 3px rgba(20, 22, 26, 0.12);
-}
-
-.nq-tabs-panel {
-  margin-top: var(--tabs-gap);
-  padding: 20px;
-  border: 1px solid var(--tabs-border);
-  border-radius: 10px;
-  background: var(--tabs-panel);
-  line-height: 1.6;
-}
-
-.nq-tabs-empty {
-  color: var(--tabs-muted);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .nq-tabs-list button {
-    transition-duration: 0.01ms;
-  }
+  --nq-tabs-active: var(--color-primary, #1e3ae0);
+  --nq-tabs-text: var(--color-text, #14161a);
+  --nq-tabs-muted: var(--color-text-muted, #5c635e);
+  --nq-tabs-border: var(--color-border, #d6d9d4);
+  --nq-tabs-panel: var(--color-surface, #ffffff);
+  --nq-tabs-gap: 24px;
+  --nq-tabs-radius: 10px;
+  --nq-tabs-duration: 160ms;
+  --nq-tabs-easing: ease-out;
 }
 }"
 `;

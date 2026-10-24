@@ -10,7 +10,7 @@ import {
   Button,
   Accordion,
   Tabs,
-} from '../src/index.js';
+} from '../src/index';
 
 describe('public entry', () => {
   it('exports the three components', () => {

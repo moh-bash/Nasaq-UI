@@ -21,9 +21,9 @@ export const BUTTON_ICONS = ['none', 'plus', 'arrow-right', 'check', 'download',
   'TRANSPARENT' removes the fill/border; any other string is a theme token key.
 */
 export const VARIANT_TOKENS = {
-  primary: { background: 'primary', text: 'on-solid', border: 'primary' },
-  secondary: { background: 'secondary', text: 'on-solid', border: 'secondary' },
-  danger: { background: 'danger', text: 'on-solid', border: 'danger' },
+  primary: { background: 'primary', text: 'on-primary', border: 'primary' },
+  secondary: { background: 'secondary', text: 'on-secondary', border: 'secondary' },
+  danger: { background: 'danger', text: 'on-danger', border: 'danger' },
   outline: { background: 'TRANSPARENT', text: 'text', border: 'border' },
   ghost: { background: 'TRANSPARENT', text: 'text', border: 'TRANSPARENT' },
 };
