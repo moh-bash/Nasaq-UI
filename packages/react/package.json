@@ -1,6 +1,6 @@
 {
   "name": "nasaq",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A tightened React component kit: accessible Accordion, Button and Tabs with a theme-first token system.",
   "type": "module",
   "main": "./dist/nasaq.cjs",
